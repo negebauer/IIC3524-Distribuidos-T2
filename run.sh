@@ -24,7 +24,7 @@ print 'parallel'
 if [[ $(pwd) == *"Nico"* ]]; then
   time TMPDIR=~/mpitemp mpirun ./parallel.o $params
 else
-  time mpirun ./parallel.o $params
+  time mpirun -hostfile ./hosts.txt -N 4 ./parallel.o $params
 fi
 # mv $img_out_path i_parallel.png
 # echo ''

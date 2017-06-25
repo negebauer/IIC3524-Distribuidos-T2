@@ -11,11 +11,18 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  int rank, size;
-  MPI_Init(&argc, &argv);
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  int size, rank, len, rc;
+  char hostname[MPI_MAX_PROCESSOR_NAME];
+  rc = MPI_Init(&argc, &argv);
+  if (rc != MPI_SUCCESS) {
+    printf("Error starting MPI program. Terminating.\n");
+    MPI_Abort(MPI_COMM_WORLD, rc);
+  }
   MPI_Comm_size(MPI_COMM_WORLD, &size);
-  printf("Hello, world! I am process %d of %d\n", rank, size);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Get_processor_name(hostname, &len);
+  printf("Number of tasks= %d My rank= %d Running on %s\n", size, rank,
+         hostname); /******* do some work *******/
   MPI_Finalize();
 
   return 0;
