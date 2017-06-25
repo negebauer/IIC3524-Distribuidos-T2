@@ -1,3 +1,7 @@
-compile: t2/t2.c
-	gcc -o t2.o t2/t2.c -I.
-	# gcc-7 -lpng -fopenmp -o parallel imagelib/imagelib.c t1/parallel.c -I.
+compile: src/parallel.c src/secuential.c
+	gcc -o secuential.o src/secuential.c -I.
+	mpicc -o parallel.o src/parallel.c -I.
+
+clean:
+	rm secuential.o
+	rm parallel.o
