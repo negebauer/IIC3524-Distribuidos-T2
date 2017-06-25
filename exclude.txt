@@ -1,9 +1,9 @@
 .git
 **/.gitignore
 **/.DS_Store
+**/.o
 testout/*.txt
 atom.command
 deploy.sh
 exclude.txt
-t2.o
 tarea2.pdf
