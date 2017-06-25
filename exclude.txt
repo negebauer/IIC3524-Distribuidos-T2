@@ -1,6 +1,7 @@
 .git
 **/.gitignore
 **/.DS_Store
+testout/*.txt
 atom.command
 deploy.sh
 exclude.txt
