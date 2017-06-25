@@ -1,18 +1,8 @@
 .git
 **/.gitignore
 **/.DS_Store
-# report
-test/out/*.png
 atom.command
 deploy.sh
 exclude.txt
-i_parallel.png
-i_secuential.png
-Makefile
-parallel
-# README.md
-secuential
-t1.log
-t1_really_big.log
-tarea1.pdf
-tripio_run.sh
+t2.o
+tarea2.pdf
