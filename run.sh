@@ -36,10 +36,7 @@ if $(is_local_nico); then
 else
   time mpirun -hostfile ./hosts.txt -N 4 ./parallel.o $params
 fi
-# mv $img_out_path i_parallel.png
-# echo ''
+echo ''
 echo "--- secuential $test_name ---"
 time ./secuential.o $params
-# mv $img_out_path i_secuential.png
-# cp i_parallel.png $img_out_path
 cp i_parallel.png $img_out_path
