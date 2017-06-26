@@ -8,33 +8,42 @@ void dfs(WSP *wsp, Route *route) {
   if (route->size == wsp->size) {
     printf("Finished route\n");
     routePrint(route);
-    if (!wsp->route || route->cost < wsp->route->cost) {
-      wsp->route = route;
+    if (wsp->cost == -1 || route->cost < wsp->cost) {
+      wsp->cost = route->cost;
+      wsp->cities = route->cities;
     }
     return;
   }
 
   // If worse than best, stop travelling
-  if (wsp->route && route->cost >= wsp->route->cost) {
+  if (wsp->cost != -1 && route->cost >= wsp->cost) {
     return;
   }
 
   // Keep travelling
   for (int destination = 1; destination < wsp->size; destination++) {
-    if (!route->visited[destination]) {
-      int origin = route->size - 1;
-      int cost = wsp->roads[origin][destination];
-      route->visited[destination] = 1;
-      route->cost += cost;
-      route->cities[route->size] = origin;
-      route->size += 1;
-      printf("Travelling %i to %i\n", origin, destination);
+    // printf("Checking destination %i\n", destination);
+    if (routeCanVisit(route, destination)) {
+      // printf("Travelling %i to %i\n", route->size - 1, destination);
+      routeGo(wsp, route, destination);
       dfs(wsp, route);
-      route->cities[route->size] = -1;
-      route->visited[destination] = 0;
-      route->cost -= cost;
-      route->size -= 1;
+      // printf("Returning %i to %i\n", destination, route->size - 1);
+      routeReturn(wsp, route, destination);
     }
+    // if (!route->visited[destination]) {
+    //   int origin = route->size - 1;
+    //   int cost = wsp->roads[origin][destination];
+    //   route->visited[destination] = 1;
+    //   route->cost += cost;
+    //   route->cities[route->size] = origin;
+    //   route->size += 1;
+    //   printf("Travelling %i to %i\n", origin, destination);
+    //   dfs(wsp, route);
+    //   route->cities[route->size] = -1;
+    //   route->visited[destination] = 0;
+    //   route->cost -= cost;
+    //   route->size -= 1;
+    // }
   }
 }
 
@@ -52,7 +61,7 @@ int main(int argc, char *argv[]) {
   Route *route = routeInit(wsp);
   dfs(wsp, route);
 
-  routePrint(route);
+  wspPrint(wsp);
   wspFree(wsp);
   return 0;
 }

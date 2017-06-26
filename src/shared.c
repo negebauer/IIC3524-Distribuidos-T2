@@ -11,11 +11,36 @@ struct Route {
 struct WSP {
   int size;
   int **roads;
-  struct Route *route;
+  int *cities;
+  int cost;
 };
 
 typedef struct Route Route;
 typedef struct WSP WSP;
+
+// Important stuff
+
+int routeCanVisit(Route *route, int destination) {
+  return route->visited[destination] == 0;
+};
+
+void routeGo(WSP *wsp, Route *route, int destination) {
+  int origin = route->size - 1;
+  int cost = wsp->roads[origin][destination];
+  route->cities[route->size] = destination;
+  route->visited[destination] = 1;
+  route->cost += cost;
+  route->size += 1;
+};
+
+void routeReturn(WSP *wsp, Route *route, int destination) {
+  int origin = route->size - 1;
+  int cost = wsp->roads[origin][destination];
+  route->cities[route->size] = -1;
+  route->visited[destination] = 0;
+  route->cost -= cost;
+  route->size -= 1;
+};
 
 // Init stuff
 
@@ -28,6 +53,7 @@ Route *routeInit(WSP *wsp) {
   route->visited[0] = 1;
   for (int i = 1; i < wsp->size; i++) {
     route->cities[i] = -1;
+    route->visited[i] = 0;
   }
   return route;
 };
@@ -39,8 +65,9 @@ WSP *wspInit(char *input) {
   fscanf(file, "%i", &size);
   printf("Allocating wsp\n");
   WSP *wsp = malloc(sizeof(WSP));
-  *wsp = (WSP){.size = size};
+  *wsp = (WSP){.size = size, .cost = -1};
 
+  wsp->cities = calloc(size, sizeof(int));
   wsp->roads = calloc(size, sizeof(int *));
   for (int origin = 0; origin < size; origin++) {
     wsp->roads[origin] = calloc(size, sizeof(int));
@@ -62,8 +89,7 @@ WSP *wspInit(char *input) {
 // Print stuff
 
 void routePrint(Route *route) {
-  printf("cost %i\n", route->cost);
-  printf("Route\n");
+  printf("Route cost %i\n\t", route->cost);
   for (int i = 0; i < route->size; i++) {
     printf("%i ", route->cities[i]);
   }
@@ -73,9 +99,7 @@ void routePrint(Route *route) {
 void wspPrint(WSP *wsp) {
   printf("WSP\n");
   printf("size %i\n", wsp->size);
-  if (wsp->route) {
-    routePrint(wsp->route);
-  }
+  printf("cost %i\n", wsp->cost);
   printf("Cities\n");
   for (int destination = 0; destination < wsp->size; destination++) {
     printf("\t%i", destination);
@@ -85,6 +109,10 @@ void wspPrint(WSP *wsp) {
     for (int destination = 0; destination < wsp->size; destination++) {
       printf("\t%i", wsp->roads[origin][destination]);
     }
+  }
+  printf("\nRoute\n");
+  for (int i = 0; i < wsp->size; i++) {
+    printf("%i\t", wsp->cities[i]);
   }
   printf("\n");
 };
@@ -101,7 +129,7 @@ void wspFree(WSP *wsp) {
   for (int origin = 0; origin < wsp->size; origin++) {
     free(wsp->roads[origin]);
   }
-  routeFree(wsp, wsp->route);
+  free(wsp->cities);
   free(wsp->roads);
   free(wsp);
 };
