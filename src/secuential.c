@@ -26,7 +26,7 @@ void dfs(WSP *wsp, Route *route) {
   for (int destination = 1; destination < wsp->size; destination++) {
     // printf("Checking destination %i\n", destination);
     if (routeCanVisit(route, destination)) {
-      routeGo(wsp, route, destination);
+      routeAdvance(wsp, route, destination);
       dfs(wsp, route);
       routeReturn(wsp, route, destination);
     }

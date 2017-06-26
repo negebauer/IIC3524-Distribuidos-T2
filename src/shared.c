@@ -24,7 +24,7 @@ int routeCanVisit(Route *route, int destination) {
   return route->visited[destination] == 0;
 };
 
-void routeGo(WSP *wsp, Route *route, int destination) {
+void routeAdvance(WSP *wsp, Route *route, int destination) {
   int origin = route->size - 1;
   int cost = wsp->roads[origin][destination];
   route->cities[route->size] = destination;
@@ -34,7 +34,7 @@ void routeGo(WSP *wsp, Route *route, int destination) {
 };
 
 void routeReturn(WSP *wsp, Route *route, int destination) {
-  int origin = route->size - 1;
+  int origin = route->size - 2;
   int cost = wsp->roads[origin][destination];
   route->cities[route->size] = -1;
   route->visited[destination] = 0;
