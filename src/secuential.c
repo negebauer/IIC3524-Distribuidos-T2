@@ -7,7 +7,7 @@ void dfs(WSP *wsp, Route *route) {
   if (wsp->route) {
     printf("Min cost %i route %i\n", wsp->route->cost, route->cost);
   } else {
-    printf("Route cost %i\n", route->cost);
+    printf("Route cost %i size %i\n", route->cost, route->size);
   }
 
   // If route completed, check if best
@@ -44,8 +44,12 @@ int main(int argc, char *argv[]) {
   }
   char *input = argv[1];
   WSP *wsp = wspInit(input);
+  wspPrint(wsp);
 
   Route *route = routeInit(wsp, NULL);
+  for (int d = 0; d < wsp->size - route->size; d++) {
+    printf("Tour destination %i city %i\n", d, route->tour[d]->number);
+  }
   dfs(wsp, route);
   printf("Cheapest %i\n", wsp->route->cost);
 

@@ -47,7 +47,7 @@ Route *routeInit(WSP *wsp, Route *previous) {
   int size = wsp->size - 1;
   Route *route = malloc(sizeof(Route));
   *route = (Route){.cost = 0, .size = 1};
-  route->visited = calloc(size, sizeof(City *));
+  route->visited = calloc(size + 1, sizeof(City *));
   route->tour = calloc(size, sizeof(City *));
   route->visited[0] = wsp->cities[0];
   route->roads = calloc(size, sizeof(Road *));
@@ -60,7 +60,7 @@ Route *routeInit(WSP *wsp, Route *previous) {
       route->roads[number] = previous->roads[number];
     }
   } else {
-    for (int number = 0; number < size - 1; number++) {
+    for (int number = 0; number < size; number++) {
       route->tour[number] = wsp->cities[number + 1];
     }
   }
@@ -90,17 +90,22 @@ int routeCompleted(WSP *wsp, Route *route) {
 
 void routePopTour(WSP *wsp, Route *route) {
   int destinations = wsp->size - route->size;
-  for (int number = 0; number < destinations - 1; number++) {
+  for (int number = 0; number < destinations; number++) {
     route->tour[number] = route->tour[number + 1];
   }
 };
 
 void routeVisitDestination(WSP *wsp, Route *route, int destination) {
+  City *origin = route->visited[route->size - 1];
+  printf("destination %i\n", destination);
   City *visit = route->tour[destination];
-  Road *road = roadFromCityToCity(wsp, route->visited[route->size - 1], visit);
+  printf("from %i visit %i\n", origin->number, visit->number);
+  Road *road = roadFromCityToCity(wsp, origin, visit);
   route->cost += road->cost;
   route->roads[route->size - 1] = road;
+  printf("te %i\n", route->size);
   route->visited[route->size] = visit;
+  printf("pille\n");
   route->size++;
   routePopTour(wsp, route);
 };
@@ -145,7 +150,9 @@ WSP *wspInit(char *input) {
 void wspPrint(WSP *wsp) {
   printf("WSP\n");
   printf("size %i\n", wsp->size);
-  printf("cost %i\n", wsp->route->cost);
+  if (wsp->route) {
+    printf("cost %i\n", wsp->route->cost);
+  }
   printf("Cities\n");
   for (int number = 0; number < wsp->size; number++) {
     City *city = wsp->cities[number];
