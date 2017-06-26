@@ -9,6 +9,7 @@ void dfs(WSP *wsp, Route *route) {
     if (!wsp->route || route->cost < wsp->route->cost) {
       wsp->route = route;
     }
+    return;
   }
 
   // If worse than best, stop travelling
