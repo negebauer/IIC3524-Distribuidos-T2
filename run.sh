@@ -8,7 +8,11 @@ make
 
 # Test and params to use
 test_def='t1'
-if [[ -z $1 ]]; then test_path="test/${test_def}.txt"; else test_path=$1; fi
+if [[ -z $1 ]] || [[ $1 == "-"* ]] && [[ -z $2 ]]; then
+  test_path="test/${test_def}.txt"
+else
+  if [[ $1 == "-"* ]]; then test_path=$2; else test_path=$1; fi
+fi
 
 test_file="${test_path##*/}"
 test_name="${test_file%.*}"
@@ -19,13 +23,13 @@ params="$test_path"
 # Run stuff
 is_local_nico() { [[ $(pwd) == *"Nico"* ]] || [[ $(pwd) == *'Parallels'* ]]; }
 
-if [[ $1 == "-v" ]]; then valgrind --track-origins=yes --leak-check=full ./secuential.o "test/$test_def.txt"; exit; fi
-if [[ $1 == "-s" ]]; then ./secuential.o "test/$test_def.txt"; exit; fi
+if [[ $1 == "-v" ]]; then valgrind --track-origins=yes --leak-check=full ./secuential.o "$params"; exit; fi
+if [[ $1 == "-s" ]]; then ./secuential.o "$params"; exit; fi
 if [[ $1 == "-m" ]]; then
   if $(is_local_nico); then
-    TMPDIR=~/mpitemp mpirun ./parallel.o "test/$test_def.txt"
+    TMPDIR=~/mpitemp mpirun ./parallel.o "$params"
   else
-    mpirun -hostfile ./hosts.txt -N 4 ./parallel.o "test/$test_def.txt"
+    mpirun -hostfile ./hosts.txt -N 4 ./parallel.o "$params"
   fi
   exit
 fi
