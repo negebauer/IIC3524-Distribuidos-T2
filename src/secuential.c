@@ -1,4 +1,4 @@
-// #include "shared.c"
+#include "shared.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
