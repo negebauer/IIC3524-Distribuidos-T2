@@ -17,8 +17,8 @@ void dfs(WSP *wsp, Route *route) {
 
   // If worse than best, stop travelling
   if (wsp->cost != -1 && route->cost >= wsp->cost) {
-    printf("Worse\t");
-    routePrint(route);
+    // printf("Worse\t");
+    // routePrint(route);
     return;
   }
 
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
   }
   char *input = argv[1];
   WSP *wsp = wspInit(input);
-  wspPrint(wsp);
+  // wspPrint(wsp);
 
   Route *route = routeInit(wsp);
   dfs(wsp, route);

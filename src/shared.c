@@ -45,9 +45,10 @@ void routeAdvance(WSP *wsp, Route *route, int destination) {
   route->cost += cost;
   route->size += 1;
 
-  printf("Travel from %i to %i cost %i total %i\n", origin, destination, cost,
-         route->cost);
-  routePrintDebug(wsp, route);
+  // printf("Travel from %i to %i cost %i total %i\n", origin, destination,
+  // cost,
+  //  route->cost);
+  // routePrintDebug(wsp, route);
 };
 
 void routeReturn(WSP *wsp, Route *route, int destination) {
@@ -58,9 +59,10 @@ void routeReturn(WSP *wsp, Route *route, int destination) {
   route->cost -= cost;
   route->size -= 1;
 
-  printf("Return from %i to %i cost %i total %i\n", destination, origin, cost,
-         route->cost);
-  routePrintDebug(wsp, route);
+  // printf("Return from %i to %i cost %i total %i\n", destination, origin,
+  // cost,
+  //  route->cost);
+  // routePrintDebug(wsp, route);
 };
 
 // Init stuff
@@ -80,11 +82,11 @@ Route *routeInit(WSP *wsp) {
 };
 
 WSP *wspInit(char *input) {
-  printf("Reading file %s\n", input);
+  // printf("Reading file %s\n", input);
   FILE *file = fopen(input, "r");
   int size;
   fscanf(file, "%i", &size);
-  printf("Allocating wsp\n");
+  // printf("Allocating wsp\n");
   WSP *wsp = malloc(sizeof(WSP));
   *wsp = (WSP){.size = size, .cost = -1};
 
@@ -97,8 +99,8 @@ WSP *wspInit(char *input) {
     for (int destination = origin + 1; destination < size; destination++) {
       int cost;
       fscanf(file, "%i", &cost);
-      printf("Allocating road from city %i to %i cost %i\n", origin,
-             destination, cost);
+      // printf("Allocating road from city %i to %i cost %i\n", origin,
+      //  destination, cost);
       wsp->roads[origin][destination] = cost;
       wsp->roads[destination][origin] = cost;
     }
