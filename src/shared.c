@@ -36,14 +36,15 @@ typedef struct WSP WSP;
 Route *routeInit(WSP *wsp, Route *previous) {
   int size = wsp->size;
   Route *route = malloc(sizeof(Route));
-  *route = (Route){.cost = 0, .size = 0};
+  *route = (Route){.cost = 0, .size = 1};
   route->cities = calloc(size, sizeof(City *));
+  route->cities[0] = wsp->cities[0];
   route->roads = calloc(size, sizeof(Road *));
   if (previous) {
     route->size = previous->size;
     route->cost = previous->cost;
-    for (int number = 0; number < previous->size; number++) {
-      route->cities[number] = previous->cities[number];
+    for (int number = 0; number < previous->size - 1; number++) {
+      route->cities[number + 1] = previous->cities[number + 1];
       route->roads[number] = previous->roads[number];
     }
   };
@@ -57,10 +58,10 @@ void routeFree(Route *route) {
 };
 
 void routeVisitCityTroughRoad(Route *route, City *city, Road *road) {
-  route->size++;
   route->cost += road->cost;
-  route->cities[route->size] = city;
   route->roads[route->size] = road;
+  route->size++;
+  route->cities[route->size] = city;
 };
 
 int routeCompleted(WSP *wsp, Route *route) {
