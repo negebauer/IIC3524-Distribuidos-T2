@@ -5,27 +5,25 @@
 
 void dfs(WSP *wsp, Route *route) {
   // If route completed, check if best
-  if (route->size == wsp->size) {
-    printf("Finished route\n");
-    routePrint(route);
+  if (route->cities[wsp->size - 1] != -1) {
     if (wsp->cost == -1 || route->cost < wsp->cost) {
       wsp->cost = route->cost;
-      wsp->cities = route->cities;
+      for (int i = 0; i < wsp->size; i++) {
+        wsp->cities[i] = route->cities[i];
+      }
     }
     return;
   }
 
   // If worse than best, stop travelling
   if (wsp->cost != -1 && route->cost >= wsp->cost) {
-    printf("Worse\n");
-    routePrint(route);
     return;
   }
 
   // Keep travelling
   for (int destination = 1; destination < wsp->size; destination++) {
     // printf("Checking destination %i\n", destination);
-    if (routeCanVisit(route, destination)) {
+    if (routeShouldVisit(route, destination)) {
       routeAdvance(wsp, route, destination);
       dfs(wsp, route);
       routeReturn(wsp, route, destination);

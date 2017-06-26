@@ -20,7 +20,7 @@ typedef struct WSP WSP;
 
 // Important stuff
 
-int routeCanVisit(Route *route, int destination) {
+int routeShouldVisit(Route *route, int destination) {
   return route->visited[destination] == 0;
 };
 
@@ -34,12 +34,12 @@ void routeAdvance(WSP *wsp, Route *route, int destination) {
 };
 
 void routeReturn(WSP *wsp, Route *route, int destination) {
-  int origin = route->size - 2;
-  int cost = wsp->roads[origin][destination];
-  route->cities[route->size] = -1;
-  route->visited[destination] = 0;
-  route->cost -= cost;
   route->size -= 1;
+  route->visited[destination] = 0;
+  route->cities[route->size] = -1;
+  int origin = route->size - 1;
+  int cost = wsp->roads[origin][destination];
+  route->cost -= cost;
 };
 
 // Init stuff
