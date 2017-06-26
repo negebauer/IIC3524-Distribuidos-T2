@@ -61,16 +61,20 @@ WSP *wspInit(char *input) {
 
 // Print stuff
 
+void routePrint(Route *route) {
+  printf("cost %i\n", route->cost);
+  printf("Route\n");
+  for (int i = 0; i < route->size; i++) {
+    printf("%i ", route->cities[i]);
+  }
+  printf("\n");
+};
+
 void wspPrint(WSP *wsp) {
   printf("WSP\n");
   printf("size %i\n", wsp->size);
   if (wsp->route) {
-    printf("cost %i\n", wsp->route->cost);
-    printf("Route\n");
-    for (int i = 0; i < wsp->size; i++) {
-      printf("%i ", wsp->route->cities[i]);
-    }
-    printf("\n");
+    routePrint(wsp->route);
   }
   printf("Cities\n");
   for (int destination = 0; destination < wsp->size; destination++) {

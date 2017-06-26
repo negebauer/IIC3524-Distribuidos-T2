@@ -6,6 +6,8 @@
 void dfs(WSP *wsp, Route *route) {
   // If route completed, check if best
   if (route->size == wsp->size) {
+    printf("Finished route\n");
+    routePrint(route);
     if (!wsp->route || route->cost < wsp->route->cost) {
       wsp->route = route;
     }
@@ -50,7 +52,7 @@ int main(int argc, char *argv[]) {
   Route *route = routeInit(wsp);
   dfs(wsp, route);
 
-  wspPrint(wsp);
+  routePrint(route);
   wspFree(wsp);
   return 0;
 }
