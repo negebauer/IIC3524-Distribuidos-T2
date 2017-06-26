@@ -1,3 +1,4 @@
+#include "shared.c"
 #include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,6 +11,8 @@ int main(int argc, char *argv[]) {
     printf("\t<input.txt> es el problema a resolver\n");
     return 1;
   }
+  char *input = argv[1];
+  WSP *wsp = wspInit(input);
 
   int size, rank, len, rc;
   char hostname[MPI_MAX_PROCESSOR_NAME];
@@ -24,6 +27,8 @@ int main(int argc, char *argv[]) {
   printf("Number of tasks= %d My rank= %d Running on %s\n", size, rank,
          hostname); /******* do some work *******/
   MPI_Finalize();
+  // Solve
 
+  wspFree(wsp);
   return 0;
 }
