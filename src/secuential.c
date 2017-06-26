@@ -34,12 +34,6 @@ void dfs(WSP *wsp, Route *route) {
 
   // Lets keep travelling
   int destinations = wsp->size - route->size;
-  // if (destinations == 1) {
-  //   routeVisitDestination(wsp, route, 0);
-  //   dfs(wsp, route);
-  //   return;
-  // }
-
   for (int destination = 0; destination < destinations; destination++) {
     Route *route_visit = routeInit(wsp, route);
     printf("destinations %i destination %i size %i cost %i\n", destinations,
