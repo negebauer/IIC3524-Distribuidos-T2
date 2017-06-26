@@ -39,6 +39,7 @@ Road *roadFromCityToCity(WSP *wsp, City *city1, City *city2) {
       return road;
     }
   }
+  exit(1);
   printf("ERROR NO ROUTE %i to %i\n", city1->number, city2->number);
   return city1->roads[0];
 };

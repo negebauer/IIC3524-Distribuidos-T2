@@ -10,6 +10,7 @@ void dfs(WSP *wsp, Route *route) {
     printf("Route cost %i size %i\n", route->cost, route->size);
   }
 
+  printf("Tour origin %i\n", route->visited[route->size - 1]->number);
   for (int d = 0; d < wsp->size - route->size; d++) {
     printf("Tour destination %i city %i\n", d, route->tour[d]->number);
   }
