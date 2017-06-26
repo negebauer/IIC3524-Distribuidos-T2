@@ -1,4 +1,4 @@
-#include "shared.c"
+// #include "shared.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -13,6 +13,7 @@ int main(int argc, char *argv[]) {
   char *input = argv[1];
 
   WSP *wsp = wspInit(input);
+  wspPrint(wsp);
   wspFree(wsp);
 
   return 0;
