@@ -21,7 +21,7 @@ print() {
   echo "--- $test_name ---"
 }
 
-if [[ $1 == "-v" ]]; then valgrind ./secuential.o "test/$test_def.txt"; exit; fi
+if [[ $1 == "-v" ]]; then valgrind -v --track-origins=yes --leak-check=full ./secuential.o "test/$test_def.txt"; exit; fi
 if [[ $1 == "-s" ]]; then ./secuential.o "test/$test_def.txt"; exit; fi
 
 print 'parallel'
