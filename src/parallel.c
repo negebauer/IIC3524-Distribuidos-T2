@@ -46,6 +46,11 @@ void parallel(WSP *wsp, int rank, Route *route) {
   MPI_Scatter(send_destinations, count, MPI_INT, &recv_destination, count,
               MPI_INT, source, MPI_COMM_WORLD);
 
+  if (rank >= wsp->size - 1) {
+    printf("rank: %i no work\n", rank);
+    return;
+  }
+
   routeAdvance(wsp, route, recv_destination);
   dfs(wsp, route);
 
