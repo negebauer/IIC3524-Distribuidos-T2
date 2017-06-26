@@ -9,7 +9,6 @@ struct Road {
 
 struct City {
   int number;
-  int visited;
   struct Road **roads;
 };
 
@@ -36,7 +35,7 @@ WSP *wspInit(char *input) {
   for (int number = 0; number < size; number++) {
     printf("Allocating city %i\n", number);
     City *city = malloc(sizeof(City));
-    *city = (City){.number = number, .visited = 0};
+    *city = (City){.number = number};
     city->roads = calloc(size - 1, sizeof(Road));
     wsp->cities[number] = city;
   }
