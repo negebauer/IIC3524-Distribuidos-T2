@@ -3,34 +3,34 @@
 #include <stdlib.h>
 #include <time.h>
 
-void dfs(WSP *wsp, Route *route) {
-  // If route completed, check if best
-  if (wsp->route) {
-    printf("Min cost %i route %i\n", wsp->route->cost, route->cost);
-  } else {
-    printf("Route cost %i\n", route->cost);
-  }
-
-  // If worse than best, stop travelling
-  if (wsp->route && route->cost >= wsp->route->cost) {
-    routeFree(route);
-    return;
-  }
-
-  // Lets keep travelling
-  while (!routeCompleted(route)) {
-    City *city = routeAdvance(wsp, route);
-    dfs(wsp, route);
-    routeGoback(route, city);
-  };
-
-  if (!wsp->route || route->cost < wsp->route->cost) {
-    wsp->route = route;
-  } else {
-    routeFree(route);
-  }
-  printf("Finished route\n");
-};
+// void dfs(WSP *wsp, Route *route) {
+//   // If route completed, check if best
+//   if (wsp->route) {
+//     printf("Min cost %i route %i\n", wsp->route->cost, route->cost);
+//   } else {
+//     printf("Route cost %i\n", route->cost);
+//   }
+//
+//   // If worse than best, stop travelling
+//   if (wsp->route && route->cost >= wsp->route->cost) {
+//     routeFree(route);
+//     return;
+//   }
+//
+//   // Lets keep travelling
+//   while (!routeCompleted(route)) {
+//     City *city = routeAdvance(wsp, route);
+//     dfs(wsp, route);
+//     routeGoback(route, city);
+//   };
+//
+//   if (!wsp->route || route->cost < wsp->route->cost) {
+//     wsp->route = route;
+//   } else {
+//     routeFree(route);
+//   }
+//   printf("Finished route\n");
+// };
 
 int main(int argc, char *argv[]) {
   /* The program receives 1 param */
@@ -43,9 +43,9 @@ int main(int argc, char *argv[]) {
   WSP *wsp = wspInit(input);
   wspPrint(wsp);
 
-  Route *route = routeInit(wsp);
-  dfs(wsp, route);
-  printf("Cheapest %i\n", wsp->route->cost);
+  // Route *route = routeInit(wsp);
+  // dfs(wsp, route);
+  // printf("Cheapest %i\n", wsp->route->cost);
 
   wspFree(wsp);
   return 0;
