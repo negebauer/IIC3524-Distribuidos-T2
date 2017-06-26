@@ -1,14 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* A route is a solution to the WSP when size == wsp->size
-  It contains the order in which the cities are visited and its cost
-*/
 struct Route {
   int cost;
   int size;
-  struct City **cities;
+  struct City **visited;
   struct Road **roads;
+  struct City **tour;
 };
 
 struct Road {
@@ -24,7 +22,7 @@ struct City {
 
 struct WSP {
   int size;
-  int cheapest;
+  struct Route *route;
   struct City **cities;
 };
 
@@ -37,22 +35,29 @@ Route *routeInit(WSP *wsp, Route *previous) {
   int size = wsp->size;
   Route *route = malloc(sizeof(Route));
   *route = (Route){.cost = 0, .size = 1};
-  route->cities = calloc(size, sizeof(City *));
-  route->cities[0] = wsp->cities[0];
+  route->visited = calloc(size, sizeof(City *));
+  route->tour = calloc(size, sizeof(City *));
+  route->visited[0] = wsp->cities[0];
   route->roads = calloc(size, sizeof(Road *));
   if (previous) {
     route->size = previous->size;
     route->cost = previous->cost;
+    route->tour = previous->tour;
     for (int number = 0; number < previous->size - 1; number++) {
-      route->cities[number + 1] = previous->cities[number + 1];
+      route->visited[number + 1] = previous->visited[number + 1];
       route->roads[number] = previous->roads[number];
     }
-  };
+  } else {
+    for (int number = 0; number < size - 1; number++) {
+      route->tour[number] = wsp->cities[number + 1];
+    }
+  }
   return route;
 };
 
 void routeFree(Route *route) {
-  free(route->cities);
+  free(route->visited);
+  free(route->tour);
   free(route->roads);
   free(route);
 };
@@ -61,7 +66,7 @@ void routeVisitCityTroughRoad(Route *route, City *city, Road *road) {
   route->cost += road->cost;
   route->roads[route->size] = road;
   route->size++;
-  route->cities[route->size] = city;
+  route->visited[route->size] = city;
 };
 
 int routeCompleted(WSP *wsp, Route *route) {
@@ -78,7 +83,7 @@ WSP *wspInit(char *input) {
   fscanf(file, "%i", &size);
   printf("Allocating wsp\n");
   WSP *wsp = malloc(sizeof(WSP));
-  *wsp = (WSP){.cheapest = -1, .size = size};
+  *wsp = (WSP){.size = size};
 
   wsp->cities = calloc(size, sizeof(City *));
   for (int number = 0; number < size; number++) {
@@ -111,7 +116,7 @@ WSP *wspInit(char *input) {
 void wspPrint(WSP *wsp) {
   printf("WSP\n");
   printf("size %i\n", wsp->size);
-  printf("cheapest %i\n", wsp->cheapest);
+  printf("cost %i\n", wsp->route->cost);
   printf("Cities\n");
   for (int number = 0; number < wsp->size; number++) {
     City *city = wsp->cities[number];
@@ -138,5 +143,6 @@ void wspFree(WSP *wsp) {
     free(city);
   }
   free(wsp->cities);
+  routeFree(wsp->route);
   free(wsp);
 };
