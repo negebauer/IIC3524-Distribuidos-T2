@@ -24,9 +24,11 @@ typedef struct City City;
 typedef struct WSP WSP;
 
 WSP *wspInit(char *input) {
+  printf("Reading file %s\n", input);
   FILE *file = fopen(input, "r");
   int size;
   fscanf(file, "%i", &size);
+  printf("Allocating wsp\n");
   WSP *wsp = malloc(sizeof(WSP));
   *wsp = (WSP){.cheapest = -1, .size = size};
 
@@ -45,7 +47,8 @@ WSP *wspInit(char *input) {
       City *city2 = wsp->cities[connection + 1];
       int cost;
       fscanf(file, "%i", &cost);
-      printf("Cost from city %i to %i is %i\n", number, connection + 1, cost);
+      printf("Allocating road from city %i to %i cost %i\n", number,
+             connection + 1, cost);
       Road *road = malloc(sizeof(Road));
       *road = (Road){.city1 = city1, .city2 = city2, .cost = cost};
       city1->roads[connection] = road;
