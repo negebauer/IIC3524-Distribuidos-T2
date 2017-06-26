@@ -140,6 +140,14 @@ void wspPrint(WSP *wsp) {
   printf("\n");
 };
 
+void wspPrintRoute(WSP *wsp) {
+  printf("Route cost %i\n ", wsp->cost);
+  for (int i = 0; i < wsp->size; i++) {
+    printf("%i ", wsp->cities[i]);
+  }
+  printf("\n");
+};
+
 // Free stuff
 
 void routeFree(WSP *wsp, Route *route) {

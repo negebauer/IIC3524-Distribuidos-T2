@@ -47,7 +47,8 @@ int main(int argc, char *argv[]) {
   Route *route = routeInit(wsp);
   dfs(wsp, route);
 
-  wspPrint(wsp);
+  // wspPrint(wsp);
+  wspPrintRoute(wsp);
   wspFree(wsp);
   return 0;
 }
