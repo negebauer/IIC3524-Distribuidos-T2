@@ -5,25 +5,10 @@
 
 void dfs(WSP *wsp, Route *route) {
   // If route completed, check if best
-  if (routeCompleted(wsp, route)) {
-    if (!wsp->route || route->cost < wsp->route->cost) {
-      wsp->route = route;
-    } else {
-      routeFree(route);
-    }
-    printf("Finished route\n");
-    return;
-  }
-
   if (wsp->route) {
     printf("Min cost %i route %i\n", wsp->route->cost, route->cost);
   } else {
-    printf("Route cost %i size %i\n", route->cost, route->size);
-  }
-
-  printf("Tour origin %i\n", route->visited[route->size - 1]->number);
-  for (int d = 0; d < wsp->size - route->size; d++) {
-    printf("Tour destination %i city %i\n", d, route->tour[d]->number);
+    printf("Route cost %i\n", route->cost);
   }
 
   // If worse than best, stop travelling
@@ -33,14 +18,18 @@ void dfs(WSP *wsp, Route *route) {
   }
 
   // Lets keep travelling
-  int destinations = wsp->size - route->size;
-  for (int destination = 0; destination < destinations; destination++) {
-    Route *route_visit = routeInit(wsp, route);
-    printf("destinations %i destination %i size %i cost %i\n", destinations,
-           destination, route->size, route->cost);
-    routeVisitDestination(wsp, route_visit, destination);
-    dfs(wsp, route_visit);
+  while (!routeCompleted(route)) {
+    City *city = routeAdvance(wsp, route);
+    dfs(wsp, route);
+    routeGoback(route, city);
+  };
+
+  if (!wsp->route || route->cost < wsp->route->cost) {
+    wsp->route = route;
+  } else {
+    routeFree(route);
   }
+  printf("Finished route\n");
 };
 
 int main(int argc, char *argv[]) {
@@ -54,7 +43,7 @@ int main(int argc, char *argv[]) {
   WSP *wsp = wspInit(input);
   wspPrint(wsp);
 
-  Route *route = routeInit(wsp, NULL);
+  Route *route = routeInit(wsp);
   dfs(wsp, route);
   printf("Cheapest %i\n", wsp->route->cost);
 

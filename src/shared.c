@@ -1,12 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+struct CityNode {
+  struct CityNode *next;
+  struct City *city;
+};
+
+struct CityStack {
+  struct CityNode *first;
+  struct CityNode *last;
+};
+
 struct Route {
   int cost;
-  int size;
-  struct City **visited;
+  struct CityStack *visited;
   struct Road **roads;
-  struct City **tour;
+  struct CityStack *tour;
 };
 
 struct Road {
@@ -26,6 +35,8 @@ struct WSP {
   struct City **cities;
 };
 
+typedef struct CityNode CityNode;
+typedef struct CityStack CityStack;
 typedef struct Route Route;
 typedef struct Road Road;
 typedef struct City City;
@@ -43,67 +54,92 @@ Road *roadFromCityToCity(WSP *wsp, City *city1, City *city2) {
   exit(1);
 };
 
-Route *routeInit(WSP *wsp, Route *previous) {
-  int size = wsp->size - 1;
+void cityStackPush(CityStack *cityStack, City *city) {
+  CityNode *node = malloc(sizeof(CityNode));
+  node->city = city;
+  node->next = cityStack->first;
+  cityStack->first = node;
+};
+
+void cityStackBottom(CityStack *cityStack, City *city) {
+  CityNode *node = malloc(sizeof(CityNode));
+  node->city = city;
+};
+
+CityNode *cityStackPop(CityStack *cityStack) {
+  if (!cityStack->first->city) {
+    return NULL;
+  }
+  CityNode *node = cityStack->first;
+  cityStack->first = node->next;
+  return node;
+};
+
+CityStack *cityStackInit() {
+  CityStack *stack = malloc(sizeof(CityStack));
+  CityNode *node = malloc(sizeof(CityNode));
+  stack->first = node;
+  stack->last = node;
+  return stack;
+};
+
+Route *routeInit(WSP *wsp) {
   Route *route = malloc(sizeof(Route));
-  *route = (Route){.cost = 0, .size = 1};
-  route->visited = calloc(size + 1, sizeof(City *));
-  route->tour = calloc(size, sizeof(City *));
-  route->visited[0] = wsp->cities[0];
-  route->roads = calloc(size, sizeof(Road *));
-  if (previous) {
-    route->size = previous->size;
-    route->cost = previous->cost;
-    route->tour = previous->tour;
-    for (int number = 0; number < previous->size - 1; number++) {
-      route->visited[number + 1] = previous->visited[number + 1];
-      route->roads[number] = previous->roads[number];
-    }
-  } else {
-    for (int number = 0; number < size; number++) {
-      route->tour[number] = wsp->cities[number + 1];
-    }
+  *route = (Route){.cost = 0};
+  route->visited = cityStackInit();
+  cityStackPush(route->visited, wsp->cities[0]);
+  route->tour = malloc(sizeof(CityStack));
+  for (int number = 1; number < wsp->size - 1; number++) {
+    cityStackPush(route->tour, wsp->cities[number]);
   }
   return route;
 };
 
 void routeFree(Route *route) {
+  free(route->visited->first);
+  free(route->visited->last);
   free(route->visited);
+  free(route->tour->first);
+  free(route->tour->last);
   free(route->tour);
   free(route->roads);
   free(route);
 };
 
-void routeVisitCityTroughRoad(Route *route, City *city, Road *road) {
-  route->cost += road->cost;
-  route->roads[route->size - 1] = road;
-  route->visited[route->size] = city;
-  route->size++;
-};
-
-int routeCompleted(WSP *wsp, Route *route) {
-  if (route->size == wsp->size) {
+int routeCompleted(Route *route) {
+  if (!route->tour->first) {
     return 1;
   }
   return 0;
 };
 
-void routeTourPop(WSP *wsp, Route *route) {
-  int destinations = wsp->size - route->size;
-  for (int number = 0; number < destinations; number++) {
-    route->tour[number] = route->tour[number + 1];
-  }
+// void routeVisitDestination(WSP *wsp, Route *route, int destination) {
+//   City *origin = route->visited[route->size - 1];
+//   City *visit = route->tour[destination];
+//   Road *road = roadFromCityToCity(wsp, origin, visit);
+//   route->cost += road->cost;
+//   route->roads[route->size - 1] = road;
+//   route->visited[route->size] = visit;
+//   route->size++;
+//   routeTourPop(wsp, route);
+// };
+
+void routeGoBack(Route *route, City *city) {
+  cityStackPop(route->visited);
+  cityStackBottom(route->tour, city);
 };
 
-void routeVisitDestination(WSP *wsp, Route *route, int destination) {
-  City *origin = route->visited[route->size - 1];
-  City *visit = route->tour[destination];
-  Road *road = roadFromCityToCity(wsp, origin, visit);
+City *routeAdvance(WSP *wsp, Route *route) {
+  CityNode *destination_node = cityStackPop(route->tour);
+  if (!destination_node) {
+    return NULL;
+  }
+  City *origin = route->visited->first->city;
+  City *destination = destination_node->city;
+  Road *road = roadFromCityToCity(wsp, origin, destination);
   route->cost += road->cost;
-  route->roads[route->size - 1] = road;
-  route->visited[route->size] = visit;
-  route->size++;
-  routeTourPop(wsp, route);
+  cityStackPush(route->visited, destination);
+  return destination;
 };
 
 WSP *wspInit(char *input) {
