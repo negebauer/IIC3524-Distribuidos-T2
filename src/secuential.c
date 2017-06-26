@@ -17,6 +17,8 @@ void dfs(WSP *wsp, Route *route) {
 
   // If worse than best, stop travelling
   if (wsp->cost != -1 && route->cost >= wsp->cost) {
+    printf("Worse\n");
+    routePrint(route);
     return;
   }
 
