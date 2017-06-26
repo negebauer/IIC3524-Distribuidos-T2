@@ -123,14 +123,22 @@ void wspPrint(WSP *wsp) {
   printf("WSP\n");
   printf("size %i\n", wsp->size);
   printf("cost %i\n", wsp->cost);
-  printf("Cities\n");
+  printf("Cities\n  ");
   for (int destination = 0; destination < wsp->size; destination++) {
-    printf("\t%i", destination);
+    if (destination >= 10) {
+      printf(" %i", destination);
+    } else {
+      printf("  %i", destination);
+    }
   }
   for (int origin = 0; origin < wsp->size; origin++) {
-    printf("\n%i", origin);
+    if (origin < 10) {
+      printf("\n%i ", origin);
+    } else {
+      printf("\n%i", origin);
+    }
     for (int destination = 0; destination < wsp->size; destination++) {
-      printf("\t%i", wsp->roads[origin][destination]);
+      printf("  %i", wsp->roads[origin][destination]);
     }
   }
   printf("\nRoute\n");
