@@ -4,6 +4,17 @@
 #include <time.h>
 
 void dfs(WSP *wsp, Route *route) {
+  // If route completed, check if best
+  if (routeCompleted(wsp, route)) {
+    if (!wsp->route || route->cost < wsp->route->cost) {
+      wsp->route = route;
+    } else {
+      routeFree(route);
+    }
+    printf("Finished route\n");
+    return;
+  }
+
   if (wsp->route) {
     printf("Min cost %i route %i\n", wsp->route->cost, route->cost);
   } else {
@@ -15,16 +26,6 @@ void dfs(WSP *wsp, Route *route) {
     printf("Tour destination %i city %i\n", d, route->tour[d]->number);
   }
 
-  // If route completed, check if best
-  if (routeCompleted(wsp, route)) {
-    if (!wsp->route || route->cost < wsp->route->cost) {
-      wsp->route = route;
-    } else {
-      routeFree(route);
-    }
-    return;
-  }
-
   // If worse than best, stop travelling
   if (wsp->route && route->cost >= wsp->route->cost) {
     routeFree(route);
@@ -33,8 +34,16 @@ void dfs(WSP *wsp, Route *route) {
 
   // Lets keep travelling
   int destinations = wsp->size - route->size;
+  // if (destinations == 1) {
+  //   routeVisitDestination(wsp, route, 0);
+  //   dfs(wsp, route);
+  //   return;
+  // }
+
   for (int destination = 0; destination < destinations; destination++) {
     Route *route_visit = routeInit(wsp, route);
+    printf("destinations %i destination %i size %i cost %i\n", destinations,
+           destination, route->size, route->cost);
     routeVisitDestination(wsp, route_visit, destination);
     dfs(wsp, route_visit);
   }
