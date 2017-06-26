@@ -42,12 +42,10 @@ int main(int argc, char *argv[]) {
   }
   char *input = argv[1];
   WSP *wsp = wspInit(input);
-  // wspPrint(wsp);
-
   Route *route = routeInit(wsp);
+
   dfs(wsp, route);
 
-  // wspPrint(wsp);
   wspPrintRoute(wsp);
   wspFree(wsp);
   return 0;
