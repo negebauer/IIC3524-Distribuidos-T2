@@ -10,6 +10,10 @@ void dfs(WSP *wsp, Route *route) {
     printf("Route cost %i size %i\n", route->cost, route->size);
   }
 
+  for (int d = 0; d < wsp->size - route->size; d++) {
+    printf("Tour destination %i city %i\n", d, route->tour[d]->number);
+  }
+
   // If route completed, check if best
   if (routeCompleted(wsp, route)) {
     if (!wsp->route || route->cost < wsp->route->cost) {
