@@ -31,15 +31,19 @@ void routeAdvance(WSP *wsp, Route *route, int destination) {
   route->visited[destination] = 1;
   route->cost += cost;
   route->size += 1;
+
+  printf("Travel from %i to %i cost %i\n", origin, destination, cost);
 };
 
 void routeReturn(WSP *wsp, Route *route, int destination) {
-  route->size -= 1;
-  route->visited[destination] = 0;
-  route->cities[route->size] = -1;
-  int origin = route->size - 1;
+  int origin = route->size - 2;
   int cost = wsp->roads[origin][destination];
+  route->cities[route->size - 1] = -1;
+  route->visited[destination] = 0;
   route->cost -= cost;
+  route->size -= 1;
+
+  printf("Return from %i to %i cost %i\n", destination, origin, cost);
 };
 
 // Init stuff
