@@ -47,9 +47,6 @@ int main(int argc, char *argv[]) {
   wspPrint(wsp);
 
   Route *route = routeInit(wsp, NULL);
-  for (int d = 0; d < wsp->size - route->size; d++) {
-    printf("Tour destination %i city %i\n", d, route->tour[d]->number);
-  }
   dfs(wsp, route);
   printf("Cheapest %i\n", wsp->route->cost);
 

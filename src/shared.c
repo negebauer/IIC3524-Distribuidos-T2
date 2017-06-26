@@ -97,15 +97,11 @@ void routePopTour(WSP *wsp, Route *route) {
 
 void routeVisitDestination(WSP *wsp, Route *route, int destination) {
   City *origin = route->visited[route->size - 1];
-  printf("destination %i\n", destination);
   City *visit = route->tour[destination];
-  printf("from %i visit %i\n", origin->number, visit->number);
   Road *road = roadFromCityToCity(wsp, origin, visit);
   route->cost += road->cost;
   route->roads[route->size - 1] = road;
-  printf("te %i\n", route->size);
   route->visited[route->size] = visit;
-  printf("pille\n");
   route->size++;
   routePopTour(wsp, route);
 };
