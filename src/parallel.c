@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#define SIZE 4
 
 void dfs(WSP *wsp, Route *route) {
   // If route completed, check if best
@@ -34,6 +35,24 @@ void dfs(WSP *wsp, Route *route) {
   }
 }
 
+void parallel(WSP *wsp, int rank, Route *route) {
+  int send_destinations[wsp->size - 1];
+  for (int destination = 0; destination < wsp->size - 1; destination++) {
+    send_destinations[destination] = destination + 1;
+  }
+  int count = 1;
+  int source = 0;
+  int recv_destination;
+  MPI_Scatter(send_destinations, count, MPI_INT, &recv_destination, count,
+              MPI_INT, source, MPI_COMM_WORLD);
+
+  routeAdvance(wsp, route, recv_destination);
+  dfs(wsp, route);
+
+  printf("rank: %i\n", rank);
+  wspPrintRoute(wsp);
+};
+
 int main(int argc, char *argv[]) {
   /* The program receives 1 param */
   if (argc != 2) {
@@ -41,34 +60,19 @@ int main(int argc, char *argv[]) {
     printf("\t<input.txt> es el problema a resolver\n");
     return 1;
   }
-  char *input = argv[1];
-  // WSP *wsp = wspInit(input);
-  // Route *route = routeInit(wsp);
-
-  int size, rank, dest, source, rc, count, tag = 1;
-  char inmsg, outmsg = "x";
-  MPI_Status Stat;
+  int rank;
   MPI_Init(&argc, &argv);
-  MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  char *input = argv[1];
+  WSP *wsp = wspInit(input);
+  Route *route = routeInit(wsp);
+
+  parallel(wsp, rank, route);
+
   if (rank == 0) {
-    dest = 1;
-    source = 1;
-    rc = MPI_Send(&outmsg, 1, MPI_CHAR, dest, tag, MPI_COMM_WORLD);
-    rc = MPI_Recv(&inmsg, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, &Stat);
-  } else if (rank == 1) {
-    dest = 0;
-    source = 0;
-    rc = MPI_Recv(&inmsg, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, &Stat);
-    rc = MPI_Send(&outmsg, 1, MPI_CHAR, dest, tag, MPI_COMM_WORLD);
+    wspPrintRoute(wsp);
   }
-  rc = MPI_Get_count(&Stat, MPI_CHAR, &count);
-  printf("Task %d: Received %d char(s) from task %d with tag %d \n", rank,
-         count, Stat.MPI_SOURCE, Stat.MPI_TAG);
-
+  wspFree(wsp);
   MPI_Finalize();
-
-  // wspPrintRoute(wsp);
-  // wspFree(wsp);
   return 0;
 }
