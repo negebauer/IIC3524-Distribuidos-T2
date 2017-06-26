@@ -1,14 +1,40 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+struct Route {
+  int *cities;
+  int *visited;
+  int size;
+  int cost;
+};
+
 struct WSP {
   int size;
   int **roads;
-  // struct Route *route;
-  struct City **cities;
+  struct Route *route;
 };
 
+typedef struct Route Route;
 typedef struct WSP WSP;
+
+Route *routeInit(WSP *wsp) {
+  Route *route = malloc(sizeof(Route));
+  *route = (Route){.size = 1, .cost = 0};
+  route->cities = calloc(wsp->size, sizeof(int *));
+  route->cities[0] = 0;
+  route->visited = calloc(wsp->size, sizeof(int *));
+  route->visited[0] = 1;
+  for (int i = 1; i < wsp->size; i++) {
+    route->cities[i] = -1;
+  }
+  return route;
+};
+
+void routeFree(WSP *wsp, Route *route) {
+  free(route->cities);
+  free(route->visited);
+  free(route);
+};
 
 WSP *wspInit(char *input) {
   printf("Reading file %s\n", input);
@@ -40,9 +66,9 @@ WSP *wspInit(char *input) {
 void wspPrint(WSP *wsp) {
   printf("WSP\n");
   printf("size %i\n", wsp->size);
-  // if (wsp->route) {
-  //   printf("cost %i\n", wsp->route->cost);
-  // }
+  if (wsp->route) {
+    printf("cost %i\n", wsp->route->cost);
+  }
   printf("Cities\n");
   for (int destination = 0; destination < wsp->size; destination++) {
     printf("\t%i", destination);
@@ -60,6 +86,7 @@ void wspFree(WSP *wsp) {
   for (int origin = 0; origin < wsp->size; origin++) {
     free(wsp->roads[origin]);
   }
+  routeFree(wsp, wsp->route);
   free(wsp->roads);
   free(wsp);
 };

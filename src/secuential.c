@@ -3,34 +3,37 @@
 #include <stdlib.h>
 #include <time.h>
 
-// void dfs(WSP *wsp, Route *route) {
-//   // If route completed, check if best
-//   if (wsp->route) {
-//     printf("Min cost %i route %i\n", wsp->route->cost, route->cost);
-//   } else {
-//     printf("Route cost %i\n", route->cost);
-//   }
-//
-//   // If worse than best, stop travelling
-//   if (wsp->route && route->cost >= wsp->route->cost) {
-//     routeFree(route);
-//     return;
-//   }
-//
-//   // Lets keep travelling
-//   while (!routeCompleted(route)) {
-//     City *city = routeAdvance(wsp, route);
-//     dfs(wsp, route);
-//     routeGoback(route, city);
-//   };
-//
-//   if (!wsp->route || route->cost < wsp->route->cost) {
-//     wsp->route = route;
-//   } else {
-//     routeFree(route);
-//   }
-//   printf("Finished route\n");
-// };
+void dfs(WSP *wsp, Route *route) {
+  // If route completed, check if best
+  if (route->size == wsp->size) {
+    if (!wsp->route || route->cost < wsp->route->cost) {
+      wsp->route = route;
+    }
+  }
+
+  // If worse than best, stop travelling
+  if (wsp->route && route->cost >= wsp->route->cost) {
+    return;
+  }
+
+  // Keep travelling
+  for (int destination = 1; destination < wsp->size; destination++) {
+    if (!route->visited[destination]) {
+      int origin = route->size - 1;
+      int cost = wsp->roads[origin][destination];
+      route->visited[destination] = 1;
+      route->cost += cost;
+      route->cities[route->size] = origin;
+      route->size += 1;
+      printf("Travelling %i to %i\n", origin, destination);
+      dfs(wsp, route);
+      route->cities[route->size] = -1;
+      route->visited[destination] = 0;
+      route->cost -= cost;
+      route->size -= 1;
+    }
+  }
+}
 
 int main(int argc, char *argv[]) {
   /* The program receives 1 param */
@@ -43,9 +46,14 @@ int main(int argc, char *argv[]) {
   WSP *wsp = wspInit(input);
   wspPrint(wsp);
 
-  // Route *route = routeInit(wsp);
-  // dfs(wsp, route);
-  // printf("Cheapest %i\n", wsp->route->cost);
+  Route *route = routeInit(wsp);
+  dfs(wsp, route);
+  printf("Cheapest %i\n", wsp->route->cost);
+  printf("Route\n");
+  for (int i = 0; i < wsp->size; i++) {
+    printf("%i ", wsp->route->cities[i]);
+  }
+  printf("\n");
 
   wspFree(wsp);
   return 0;
