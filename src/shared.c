@@ -20,12 +20,25 @@ typedef struct WSP WSP;
 
 // Important stuff
 
+void routePrintDebug(WSP *wsp, Route *route) {
+  printf(" visited: ");
+  for (int i = 0; i < wsp->size; i++) {
+    printf(" %i", route->visited[i]);
+  }
+  printf("\n");
+  printf(" cities:  ");
+  for (int i = 0; i < wsp->size; i++) {
+    printf(" %i", route->cities[i]);
+  }
+  printf("\n");
+};
+
 int routeShouldVisit(Route *route, int destination) {
   return route->visited[destination] == 0;
 };
 
 void routeAdvance(WSP *wsp, Route *route, int destination) {
-  int origin = route->size - 1;
+  int origin = route->cities[route->size - 1];
   int cost = wsp->roads[origin][destination];
   route->cities[route->size] = destination;
   route->visited[destination] = 1;
@@ -34,18 +47,20 @@ void routeAdvance(WSP *wsp, Route *route, int destination) {
 
   printf("Travel from %i to %i cost %i total %i\n", origin, destination, cost,
          route->cost);
+  routePrintDebug(wsp, route);
 };
 
 void routeReturn(WSP *wsp, Route *route, int destination) {
-  int origin = route->size - 2;
+  int origin = route->cities[route->size - 2];
   int cost = wsp->roads[origin][destination];
-  route->cities[route->size - 1] = -1;
+  route->cities[route->size - 1] = 0;
   route->visited[destination] = 0;
   route->cost -= cost;
   route->size -= 1;
 
   printf("Return from %i to %i cost %i total %i\n", destination, origin, cost,
          route->cost);
+  routePrintDebug(wsp, route);
 };
 
 // Init stuff
@@ -58,7 +73,7 @@ Route *routeInit(WSP *wsp) {
   route->visited = calloc(wsp->size, sizeof(int *));
   route->visited[0] = 1;
   for (int i = 1; i < wsp->size; i++) {
-    route->cities[i] = -1;
+    route->cities[i] = 0;
     route->visited[i] = 0;
   }
   return route;

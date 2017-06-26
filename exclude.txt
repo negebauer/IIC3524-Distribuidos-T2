@@ -2,6 +2,7 @@
 **/.gitignore
 **/.DS_Store
 **/.o
+**/.log
 testout/*.txt
 atom.command
 deploy.sh

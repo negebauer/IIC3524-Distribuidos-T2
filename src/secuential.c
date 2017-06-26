@@ -5,7 +5,7 @@
 
 void dfs(WSP *wsp, Route *route) {
   // If route completed, check if best
-  if (route->cities[wsp->size - 1] != -1) {
+  if (route->cities[wsp->size - 1] != 0) {
     if (wsp->cost == -1 || route->cost < wsp->cost) {
       wsp->cost = route->cost;
       for (int i = 0; i < wsp->size; i++) {
