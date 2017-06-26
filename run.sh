@@ -8,7 +8,7 @@ make
 
 # Test and params to use
 test_def='t1'
-if [[ -z $1 ]]; then test_path="test/${img_def}.txt"; else test_path=$1; fi
+if [[ -z $1 ]]; then test_path="test/${test_def}.txt"; else test_path=$1; fi
 
 test_file="${test_path##*/}"
 test_name="${test_file%.*}"
