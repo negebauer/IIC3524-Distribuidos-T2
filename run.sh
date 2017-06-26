@@ -24,7 +24,7 @@ print() {
 if [[ $1 == "-v" ]]; then valgrind --track-origins=yes --leak-check=full ./secuential.o "test/$test_def.txt"; exit; fi
 if [[ $1 == "-s" ]]; then ./secuential.o "test/$test_def.txt"; exit; fi
 if [[ $1 == "-m" ]]; then
-  if [[ $(pwd) == *"Nico"* ]]; then
+  if [[ $(pwd) == *"Nico"* ]] || [[ $(pwd) == *'Parallels'* ]]; then
     TMPDIR=~/mpitemp mpirun ./parallel.o "test/$test_def.txt"
   else
     mpirun -hostfile ./hosts.txt -N 4 ./parallel.o "test/$test_def.txt"
@@ -33,7 +33,7 @@ if [[ $1 == "-m" ]]; then
 fi
 
 print 'parallel'
-if [[ $(pwd) == *"Nico"* ]]; then
+if [[ $(pwd) == *"Nico"* ]] || [[ $(pwd) == *'Parallels'* ]]; then
   time TMPDIR=~/mpitemp mpirun ./parallel.o $params
 else
   time mpirun -hostfile ./hosts.txt -N 4 ./parallel.o $params
