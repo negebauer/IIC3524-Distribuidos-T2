@@ -33,7 +33,8 @@ typedef struct Road Road;
 typedef struct City City;
 typedef struct WSP WSP;
 
-Route *routeInit(int size, Route *previous) {
+Route *routeInit(WSP *wsp, Route *previous) {
+  int size = wsp->size;
   Route *route = malloc(sizeof(Route));
   *route = (Route){.cost = 0, .size = 0};
   route->cities = calloc(size, sizeof(City *));
@@ -60,6 +61,13 @@ void routeVisitCityTroughRoad(Route *route, City *city, Road *road) {
   route->cost += road->cost;
   route->cities[route->size] = city;
   route->roads[route->size] = road;
+};
+
+int routeCompleted(WSP *wsp, Route *route) {
+  if (route->size == wsp->size) {
+    return 1;
+  }
+  return 0;
 };
 
 WSP *wspInit(char *input) {
