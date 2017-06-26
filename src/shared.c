@@ -88,7 +88,7 @@ int routeCompleted(WSP *wsp, Route *route) {
   return 0;
 };
 
-void routePopTour(WSP *wsp, Route *route) {
+void routeTourPop(WSP *wsp, Route *route) {
   int destinations = wsp->size - route->size;
   for (int number = 0; number < destinations; number++) {
     route->tour[number] = route->tour[number + 1];
@@ -103,7 +103,7 @@ void routeVisitDestination(WSP *wsp, Route *route, int destination) {
   route->roads[route->size - 1] = road;
   route->visited[route->size] = visit;
   route->size++;
-  routePopTour(wsp, route);
+  routeTourPop(wsp, route);
 };
 
 WSP *wspInit(char *input) {
