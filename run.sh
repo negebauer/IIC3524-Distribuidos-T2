@@ -7,7 +7,7 @@ make clean
 make
 
 # Test and params to use
-test_def='t2'
+test_def='t1'
 if [[ -z $1 ]]; then test_path="test/${img_def}.txt"; else test_path=$1; fi
 
 test_file="${test_path##*/}"
@@ -20,6 +20,10 @@ params="$test_path"
 print() {
   echo "--- $test_name ---"
 }
+
+if [[ $1 == "-v" ]]; then valgrind ./secuential.o "test/$test_def.txt"; exit; fi
+if [[ $1 == "-s" ]]; then ./secuential.o "test/$test_def.txt"; exit; fi
+
 print 'parallel'
 if [[ $(pwd) == *"Nico"* ]]; then
   time TMPDIR=~/mpitemp mpirun ./parallel.o $params
