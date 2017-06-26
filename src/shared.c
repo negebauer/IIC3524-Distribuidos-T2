@@ -17,6 +17,8 @@ struct WSP {
 typedef struct Route Route;
 typedef struct WSP WSP;
 
+// Init stuff
+
 Route *routeInit(WSP *wsp) {
   Route *route = malloc(sizeof(Route));
   *route = (Route){.size = 1, .cost = 0};
@@ -28,12 +30,6 @@ Route *routeInit(WSP *wsp) {
     route->cities[i] = -1;
   }
   return route;
-};
-
-void routeFree(WSP *wsp, Route *route) {
-  free(route->cities);
-  free(route->visited);
-  free(route);
 };
 
 WSP *wspInit(char *input) {
@@ -63,11 +59,18 @@ WSP *wspInit(char *input) {
   return wsp;
 };
 
+// Print stuff
+
 void wspPrint(WSP *wsp) {
   printf("WSP\n");
   printf("size %i\n", wsp->size);
   if (wsp->route) {
     printf("cost %i\n", wsp->route->cost);
+    printf("Route\n");
+    for (int i = 0; i < wsp->size; i++) {
+      printf("%i ", wsp->route->cities[i]);
+    }
+    printf("\n");
   }
   printf("Cities\n");
   for (int destination = 0; destination < wsp->size; destination++) {
@@ -80,6 +83,14 @@ void wspPrint(WSP *wsp) {
     }
   }
   printf("\n");
+};
+
+// Free stuff
+
+void routeFree(WSP *wsp, Route *route) {
+  free(route->cities);
+  free(route->visited);
+  free(route);
 };
 
 void wspFree(WSP *wsp) {

@@ -48,13 +48,8 @@ int main(int argc, char *argv[]) {
 
   Route *route = routeInit(wsp);
   dfs(wsp, route);
-  printf("Cheapest %i\n", wsp->route->cost);
-  printf("Route\n");
-  for (int i = 0; i < wsp->size; i++) {
-    printf("%i ", wsp->route->cities[i]);
-  }
-  printf("\n");
 
+  wspPrint(wsp);
   wspFree(wsp);
   return 0;
 }
