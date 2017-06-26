@@ -31,8 +31,20 @@ typedef struct Road Road;
 typedef struct City City;
 typedef struct WSP WSP;
 
+Road *roadFromCityToCity(WSP *wsp, City *city1, City *city2) {
+  for (int number = 0; number < wsp->size - 1; number++) {
+    Road *road = city1->roads[number];
+    if ((road->city1 == city1 && road->city2 == city2) ||
+        (road->city2 == city1 && road->city1 == city2)) {
+      return road;
+    }
+  }
+  printf("ERROR NO ROUTE %i to %i\n", city1->number, city2->number);
+  return city1->roads[0];
+};
+
 Route *routeInit(WSP *wsp, Route *previous) {
-  int size = wsp->size;
+  int size = wsp->size - 1;
   Route *route = malloc(sizeof(Route));
   *route = (Route){.cost = 0, .size = 1};
   route->visited = calloc(size, sizeof(City *));
@@ -64,9 +76,9 @@ void routeFree(Route *route) {
 
 void routeVisitCityTroughRoad(Route *route, City *city, Road *road) {
   route->cost += road->cost;
-  route->roads[route->size] = road;
-  route->size++;
+  route->roads[route->size - 1] = road;
   route->visited[route->size] = city;
+  route->size++;
 };
 
 int routeCompleted(WSP *wsp, Route *route) {
@@ -74,6 +86,23 @@ int routeCompleted(WSP *wsp, Route *route) {
     return 1;
   }
   return 0;
+};
+
+void routePopTour(WSP *wsp, Route *route) {
+  int destinations = wsp->size - route->size;
+  for (int number = 0; number < destinations - 1; number++) {
+    route->tour[number] = route->tour[number + 1];
+  }
+};
+
+void routeVisitDestination(WSP *wsp, Route *route, int destination) {
+  City *visit = route->tour[destination];
+  Road *road = roadFromCityToCity(wsp, route->visited[route->size - 1], visit);
+  route->cost += road->cost;
+  route->roads[route->size - 1] = road;
+  route->visited[route->size] = visit;
+  route->size++;
+  routePopTour(wsp, route);
 };
 
 WSP *wspInit(char *input) {
