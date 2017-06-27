@@ -1,0 +1,2 @@
+tripio
+--- secuential t6 ---
