@@ -1,25 +1,27 @@
-# Tarea 1 HPC
+# Tarea 2 HPC
 
 ## Instrucciones para correr
 
-Se puede correr la versión secuencial y paralela con un solo comando, el script `run.sh`. Este tiene el siguiente formato:  
-```sh
+Se puede correr la versión secuencial y paralela con un solo comando, el script `run.sh`  
+También se puede correr una versión en particular  
+El `<problema>` por defecto (si no se incluye) es `./test/t1.txt`
+```bash
 chmod +x ./run.sh # No olvidemos hacer que sea executable
-./run.sh <imagen input> <filtro> <repeticiones>
+./run.sh <problema.txt> # Corre paralelo y secuencial
+./run.sh -s <problema.txt> # Corre secuencial
+./run.sh -m <problema.txt> # Corre paralelo
 ```
 
-Los valores por defecto son
+Importante notar que si se quiere correr fuera de tripio modificar la línea 24 para que no ocupe el `hostfile`
+```bash
+is_local_nico() { [[ $(pwd) == *"Nico"* ]] || [[ $(pwd) == *'Parallels'* ]]; }
+# Reemplazar Nico por algun string solo presente en el pwd local
+```
 
-|variable|valor|
-|:-:|:-:|
-|imagen|big.png|
-|filtro|blur_3.txt|
-|repeticiones|3|
-
-Las imagenes se ubican en `./test/img` y son 3: lena.png, big.png y really_big.png
-
-Los filtros se ubican en `./test/kernel` y son 2: blur_3.txt y blur_6.txt
-
-El funcionamiento de los filtros consiste en una primera línea que define el alto, una segunda que defina el ancho y luego la matriz a usar. Esto permite tener más filtros que solo blur, a costo de tener que poner los valores a mano en el .txt.
-
-Si se quiere correr solo la versión paralela basta comentar la lína #37 de `run.sh`
+Los problemas están ubicados en `./test`  
+Estos fueron echos a mano o generados con el script `generate.py`  
+Si se quiere crear un nuevo problema basta con hacer
+```bash
+python3 generate.py <nombre> <tamaño>
+# Archivo se guardará como ./test/<nombre>.txt
+```
