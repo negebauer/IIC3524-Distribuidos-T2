@@ -115,6 +115,10 @@ void parallelize(WSP *wsp) {
         printf("Moar nodes than cities\n");
         break;
       }
+      if (node > 1) {
+        printf("Only one node now\n");
+        break;
+      }
       status[node][NODE] = node;
       MPI_Send(&node, 1, MPI_INT, node, DESTINATION, MPI_COMM_WORLD);
       MPI_Irecv(status[node], 3, MPI_INT, node, STATUS, MPI_COMM_WORLD, NULL);
