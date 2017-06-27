@@ -121,10 +121,11 @@ void parallelize(WSP *wsp) {
         break;
       }
       status[node][NODE] = node;
-      MPI_Send(&node, 1, MPI_INT, node, DESTINATION, MPI_COMM_WORLD);
-      MPI_Irecv(status[node], 3, MPI_INT, node, STATUS, MPI_COMM_WORLD, NULL);
-      MPI_Irecv(routes[node], wsp->size - 1, MPI_INT, node, ROUTE,
-                MPI_COMM_WORLD, NULL);
+      int i = node;
+      MPI_Send(&i, 1, MPI_INT, node, DESTINATION, MPI_COMM_WORLD);
+      MPI_Irecv(status[i], 3, MPI_INT, node, STATUS, MPI_COMM_WORLD, NULL);
+      MPI_Irecv(routes[i], wsp->size - 1, MPI_INT, node, ROUTE, MPI_COMM_WORLD,
+                NULL);
     }
     watchWork(wsp, status, routes);
   } else {
