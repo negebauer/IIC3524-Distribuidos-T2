@@ -24,12 +24,12 @@ params="$test_path"
 is_local_nico() { [[ $(pwd) == *"Nico"* ]] || [[ $(pwd) == *'Parallels'* ]]; }
 
 if [[ $1 == "-v" ]]; then valgrind --track-origins=yes --leak-check=full ./secuential.o "$params"; exit; fi
-if [[ $1 == "-s" ]]; then ./secuential.o "$params"; exit; fi
+if [[ $1 == "-s" ]]; then time ./secuential.o "$params"; exit; fi
 if [[ $1 == "-m" ]]; then
   if $(is_local_nico); then
-    TMPDIR=~/mpitemp mpirun ./parallel.o "$params"
+    time TMPDIR=~/mpitemp mpirun ./parallel.o "$params"
   else
-    mpirun -hostfile ./hosts.txt -N 4 ./parallel.o "$params"
+    time mpirun -hostfile ./hosts.txt -N 4 ./parallel.o "$params"
   fi
   exit
 fi
