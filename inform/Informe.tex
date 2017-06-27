@@ -115,11 +115,6 @@ Se grafican las tablas de tiempo y speedup a continuación
 
 \subsection*{Discusión}
 Se aprecia que para un $N$ pequeño ($t3$ por ejemplo) el speedup es inferior a $1$, es decir, el programa toma más tiempo en la versión paralela. Esto se debe a que el problema es demasiado pequeño como para aprovechar un cómputo paralelo. El preparar los datos en cada nodo junto con la comunicación entre ellos toma más tiempo que simplemente resolver el problema en un local.\\
-Al aumentar $N$ el speedup se hace mucho más importante, llegando a un $505\%$\\
-\\
-\\
-Se aprecia que al aumentar el número de threads disminuye el tiempo que ocupa la CPU cada thread, esto es esperable ya que al dividir la tarea en más procesos cada proceso tendrá que trabajar menos. También el tiempo total de uso de la CPU aumenta al aumentar el número de threads. Esto también es esperable ya que al tener más procesos que corren sobre la CPU es uso total es mayor. Es importante destacar que este tiempo no es cuanto demora el programa, sino más bien cuanto tiempo de cómputo usa de la CPU (en su totalidad). A partir de los 8 threads este valor se estabiliza. Esto puede deberse a que a partir de los 8 threads la CPU se utiliza por completo. Por lo tanto, el tiempo total de uso ya no se puede disminuir. Tener más threads solo hace que cada thread trabaje menos, pero el uso total de la CPU se mantiene.\\
-
-Lo importante es el speedup, el cual tiene a disminuir al aumentar la cantidad de threads. Se observa que al pasar de 2 a 3 y de 4 a 5 el speedup disminuye. Esto puede deberse a que el paralelismo funciona mejor con potencias de 2.\\
+Al aumentar $N$ el speedup se hace mucho más importante, llegando a un $505\%$ para el tiempo real en $t6$.\\
 
 \end{document}
