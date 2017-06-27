@@ -43,4 +43,3 @@ fi
 echo ''
 echo "--- secuential $test_name ---"
 time ./secuential.o $params
-cp i_parallel.png $img_out_path
