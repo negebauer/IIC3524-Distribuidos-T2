@@ -8,7 +8,7 @@ if len(argv) != 3:
     print('\t<size> Size of the problem')
 
 file_path = "test/" + argv[1] + ".txt"
-size = int(argv[2])
+size = int(argv[2]) - 1
 
 with open(file_path, 'w') as file:
     file.write('{}\n'.format(size))
