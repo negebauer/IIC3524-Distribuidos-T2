@@ -79,6 +79,13 @@
 Se ejecutó el programa en su versión secuencial y paralela. La versión paralela se corrió con 4 procesos en cada nodo. Los nodos utilizados fueron 3, tripio, trauco y caleuche.\\
 Los tiempos de procesamiento para encontrar el camino más corto, junto con los speedups respectivos, se presentan a continuación.\\
 Las tablas describen para cada test el tiempo que tomo ejecutando \textit{time} en los campos \textit{real} y \textit{user}. S son los tiempos secuenciales, P los paralelos.
+Los tamaños de las pruebas son
+\begin{align}
+ t3: & 12 \\
+ t4: & 16 \\
+ t5: & 17 \\
+ t6: & 18 \\
+\end{align}
 
 \begin{center}
  \includegraphics[width=6cm]{imgs/table_seconds.png}\\
@@ -105,22 +112,6 @@ Se grafican las tablas de tiempo y speedup a continuación
 \begin{center}
  \includegraphics[width=12cm]{imgs/graph_speedup.png}\\
  \footnotesize{Speedups}\\
-\end{center}
-
-
-\textit{./run.sh test/img/big.png test/kernel/blur\_3.txt 3}\\
-
-Antecedido por \textit{OMP\_NUM\_THREADS=n} con $n$ de 1 a 16.\\
-
-\begin{center}
- \includegraphics[width=12cm]{imgs/big_threads.png}\\
- \footnotesize{Tiempos CPU con 1 a 16 threads. Comando usado:}\\
-\end{center}
-
-
-\begin{center}
- \includegraphics[width=12cm]{imgs/big_threads_speedup.png}\\
- \footnotesize{Speedup con 1 a 16 threads. Comando usado:}\\
 \end{center}
 
 \subsection*{Discusión}
