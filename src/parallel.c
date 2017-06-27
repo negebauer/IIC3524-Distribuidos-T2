@@ -10,7 +10,7 @@ void dfs(WSP *wsp, Route *route, int rank, int *receive_route_cost) {
   if (receive_route_cost && *receive_route_cost != 0) {
     int cost = *receive_route_cost;
     *receive_route_cost = 0;
-    printf("Received %i\n", cost);
+    // printf("Received %i\n", cost);
     if (wsp->cost == -1 || cost < wsp->cost) {
       wsp->cost = cost;
     }
@@ -19,7 +19,7 @@ void dfs(WSP *wsp, Route *route, int rank, int *receive_route_cost) {
     if (wsp->cost == -1 || route->cost < wsp->cost) {
       wsp->cost = route->cost;
       int cost = wsp->cost;
-      printf("Scatter %i\n", cost);
+      // printf("Scatter %i\n", cost);
       MPI_Scatter(&cost, 1, MPI_INT, receive_route_cost, 1, MPI_INT, rank,
                   MPI_COMM_WORLD);
       for (int i = 0; i < wsp->size; i++) {
