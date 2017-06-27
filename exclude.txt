@@ -7,3 +7,4 @@ atom.command
 deploy.sh
 exclude.txt
 tarea2.pdf
+log.log
