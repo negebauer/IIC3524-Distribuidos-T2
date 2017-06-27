@@ -37,90 +37,95 @@ void dfs(WSP *wsp, Route *route, int rank) {
 
 enum Status { FINISHED, COST, NODE, DESTINATION, ROUTE };
 
-void watchWork(WSP *wsp, int **status, int **routes) {
+void watchWork(WSP *wsp, int **status, MPI_Request **requests_cost) {
   int stop = 0;
   while (!stop) {
-    sleep(1);
     stop = 1;
     for (int i = 1; i < wsp->size - 1; i++) {
-      printf("i %i f %i n %i c %i\n", i, status[i][FINISHED], status[i][NODE],
-             status[i][COST]);
-      if (status[i][NODE] != 0 && status[i][COST] != 0) {
-        int node = status[i][NODE];
-        status[i][NODE] = 0;
-        status[i][FINISHED] = 1;
-        printf("Node finished %i\n", node);
-        int destination = -1;
-        for (int d = 1; d < wsp->size - 1; d++) {
-          if (status[d][NODE] == 0 && !status[d][FINISHED]) {
-            destination = d;
-            break;
+      if (status[i][NODE] != 0) {
+        int received_cost = 0;
+        MPI_Test(requests_cost[1], &received_cost, NULL);
+        if (received_cost) {
+          int node = status[i][NODE];
+          status[i][NODE] = 0;
+          status[i][FINISHED] = 1;
+          printf("Node finished %i\n", node);
+          int destination = -1;
+          for (int d = 1; d < wsp->size - 1; d++) {
+            if (status[d][NODE] == 0 && !status[d][FINISHED]) {
+              destination = d;
+              break;
+            }
           }
-        }
-        printf("destination %i for %i\n", destination, node);
-        MPI_Send(&destination, 1, MPI_INT, node, DESTINATION, MPI_COMM_WORLD);
-        if (destination != -1) {
-          status[destination][NODE] = node;
-          // MPI_Request request;
-          MPI_Recv(&status[i][COST], 1, MPI_INT, node, COST, MPI_COMM_WORLD,
-                   NULL);
-          // MPI_Irecv(routes[i], wsp->size - 1, MPI_INT, node, ROUTE,
-          //           MPI_COMM_WORLD, NULL);
-        }
-        // Check for cost if share with others
-      };
+          printf("destination %i for %i\n", destination, node);
+          if (destination != -1) {
+            status[destination][NODE] = node;
+            MPI_Irecv(&status[destination][COST], 1, MPI_INT, node, COST,
+                      MPI_COMM_WORLD, requests_cost[node]);
+            // MPI_Irecv(&routes[destination], wsp->size - 1, MPI_INT, node,
+            // ROUTE,
+            //           MPI_COMM_WORLD, requests_route[node]);
+          }
+          MPI_Send(&destination, 1, MPI_INT, node, DESTINATION, MPI_COMM_WORLD);
+          // Check for cost if share with others
+        };
+      }
+      for (int i = 1; i < wsp->size - 1; i++) {
+        printf("i %i f %i n %i c %i\n", i, status[i][FINISHED], status[i][NODE],
+               status[i][COST]);
+      }
       if (stop && !status[i][FINISHED]) {
         stop = 0;
       }
     }
   }
-  printf("FINISHED\n");
-  for (int i = 0; i < wsp->size - 1; i++) {
+  int min = -1;
+  for (int i = 1; i < wsp->size - 1; i++) {
+    if (min == -1 || status[i][COST] < min) {
+      min = status[i][COST];
+    }
+  }
+  printf("min cost: %i\n", min);
+  for (int i = 1; i < wsp->size - 1; i++) {
     free(status[i]);
-    free(routes[i]);
+  }
+  int nodes;
+  MPI_Comm_size(MPI_COMM_WORLD, &nodes);
+  for (int i = 1; i < nodes; i++) {
+    free(requests_cost[i]);
   }
   free(status);
-  free(routes);
+  free(requests_cost);
   return;
 };
 
 void awaitWork(WSP *wsp, int rank) {
   int destination;
-  printf("waitin for destination rank %i\n", rank);
   MPI_Recv(&destination, 1, MPI_INT, 0, DESTINATION, MPI_COMM_WORLD, NULL);
   if (destination == -1) {
-    printf("rank %i stop\n", rank);
     return;
   }
-  printf("start rank %i destination %i\n", rank, destination);
   Route *route = routeInit(wsp);
   routeAdvance(wsp, route, destination);
   dfs(wsp, route, rank);
-  printf("finish rank %i destination %i\n", rank, destination);
-  wspPrintRoute(wsp);
-  MPI_Request request;
-  MPI_Isend(&wsp->cost, 1, MPI_INT, 0, COST, MPI_COMM_WORLD, &request);
-  MPI_Wait(&request, NULL);
-  printf("SENT r %i c %i\n", rank, wsp->cost);
-  // MPI_Send(route->cities, wsp->size - 1, MPI_INT, 0, ROUTE, MPI_COMM_WORLD)
+  // wspPrintRoute(wsp);
+  MPI_Send(&wsp->cost, 1, MPI_INT, 0, COST, MPI_COMM_WORLD);
   routeFree(wsp, route);
   awaitWork(wsp, rank);
 };
 
 void parallelize(WSP *wsp) {
-  int MAX_NODES = 1;
   int nodes, rank;
   MPI_Comm_size(MPI_COMM_WORLD, &nodes);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   if (rank == 0) {
     int **status = calloc(wsp->size - 1, sizeof(int *));
-    int **routes = calloc(wsp->size - 1, sizeof(int *));
+    MPI_Request **requests_cost = calloc(nodes, sizeof(MPI_Request *));
     for (int i = 1; i < wsp->size - 1; i++) {
       status[i] = calloc(3, sizeof(int));
       status[i][FINISHED] = 0;
       status[i][COST] = 0;
       status[i][NODE] = 0;
-      routes[i] = calloc(wsp->size - 1, sizeof(int));
     }
 
     for (int node = 1; node < nodes; node++) {
@@ -128,22 +133,15 @@ void parallelize(WSP *wsp) {
         printf("Moar nodes than cities\n");
         break;
       }
-      if (node > MAX_NODES) {
-        break;
-      }
+      requests_cost[node] = malloc(sizeof(MPI_Request));
       status[node][NODE] = node;
-      int i = node;
-      ;
-      // MPI_Request request;
-      MPI_Send(&i, 1, MPI_INT, node, DESTINATION, MPI_COMM_WORLD);
-      MPI_Recv(&status[i][COST], 1, MPI_INT, node, COST, MPI_COMM_WORLD, NULL);
-      // MPI_Irecv(routes[i], wsp->size - 1, MPI_INT, node, ROUTE,
-      // MPI_COMM_WORLD,
-      //           NULL);
+      int destination = node;
+      MPI_Irecv(&status[destination][COST], 1, MPI_INT, node, COST,
+                MPI_COMM_WORLD, requests_cost[node]);
+      MPI_Send(&destination, 1, MPI_INT, node, DESTINATION, MPI_COMM_WORLD);
     }
-    watchWork(wsp, status, routes);
-  } else if (rank <= MAX_NODES) {
-    printf("awaitWork\n");
+    watchWork(wsp, status, requests_cost);
+  } else {
     awaitWork(wsp, rank);
   }
 };
