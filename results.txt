@@ -60,8 +60,8 @@ sys	0m3.128s
 Route cost 22
  0 4 2 10 12 6 15 1 5 3 13 14 8 11 16 7 9
 
-real	0m10.932s
-user	0m10.924s
+real	0m11.136s
+user	0m11.132s
 sys	0m0.004s
 
 --- parallel t5 ---
