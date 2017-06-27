@@ -25,3 +25,5 @@ Si se quiere crear un nuevo problema basta con hacer
 python3 generate.py <nombre> <tamaño>
 # Archivo se guardará como ./test/<nombre>.txt
 ```
+
+A veces ocurre que al correr en tripio se generan errores, no he podido identificarlos y arreglarlos. Pero igual se muestra el costo mínimo para visitar todas las ciudades. Una vez que se imprima dicho número se puede cortar el proceso con `Ctrl + C`.
