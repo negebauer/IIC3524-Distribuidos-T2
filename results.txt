@@ -1,4 +1,18 @@
 local
+--- parallel t3 ---
+min cost: 19
+
+real	0m0.123s
+user	0m0.187s
+sys	0m0.085s
+
+--- secuential t3 ---
+Route cost 19: 0 1 4 3 10 7 8 2 9 6 11 5
+
+real	0m0.029s
+user	0m0.018s
+sys	0m0.002s
+
 --- secuential t6 ---
 Route cost 28
  0 2 4 10 9 1 3 6 12 8 14 15 7 13 17 11 5 16
@@ -13,6 +27,20 @@ user	2m26.492s
 sys	0m1.584s
 
 tripio
+--- secuential t3 ---
+Route cost 19: 0 1 4 3 10 7 8 2 9 6 11 5
+
+real	0m0.038s
+user	0m0.040s
+sys	0m0.000s
+
+--- parallel t3 ---
+min cost: 19
+
+real	0m1.923s
+user	0m0.244s
+sys	0m0.184s
+
 --- secuential t4 ---
 Route cost 21
  0 11 7 2 12 9 3 14 15 13 4 10 1 8 5 6
@@ -20,6 +48,13 @@ Route cost 21
 real	0m12.392s
 user	0m12.384s
 sys	0m0.004s
+
+--- parallel t4 ---
+min cost: 21
+
+real	0m4.821s
+user	0m8.772s
+sys	0m3.128s
 
 --- secuential t5 ---
 Route cost 22
@@ -29,6 +64,13 @@ real	0m10.932s
 user	0m10.924s
 sys	0m0.004s
 
+--- parallel t5 ---
+min cost: 22
+
+real	0m5.269s
+user	0m10.844s
+sys	0m2.324s
+
 --- secuential t6 ---
 Route cost 28
  0 2 4 10 9 1 3 6 12 8 14 15 7 13 17 11 5 16
@@ -36,3 +78,10 @@ Route cost 28
 real	4m30.504s
 user	4m29.336s
 sys	0m1.152s
+
+--- parallel t6 ---
+min cost: 28
+
+real	0m53.473s
+user	2m49.860s
+sys	0m37.464s
