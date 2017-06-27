@@ -151,6 +151,8 @@ int main(int argc, char *argv[]) {
     watchWork(wsp, status, requests_cost);
   } else if (rank < wsp->size - 1) {
     awaitWork(wsp, rank);
+  } else {
+    MPI_Finalize();
   }
   wspFree(wsp);
   return 0;
