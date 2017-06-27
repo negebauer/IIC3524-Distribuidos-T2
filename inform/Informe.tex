@@ -76,7 +76,18 @@
 \end{center}
 
 \subsection*{Análisis de rendimiento}
-Se ejecutó el programa en su versión secuencial y paralela con distinto número de threads (de 1 a 16) con las imagenes $big.png$. Los resultados de tiempo se presentan a continuación, junto con los speedups que representan. Importante notar que la versión secuencial tomó $0,502388$ segundos (los tiempos se miden solo en el proceso de aplicar el filtro). El comando usado para generar estos datos es:\\
+Se ejecutó el programa en su versión secuencial y paralela. La versión paralela se corrió con 4 procesos en cada nodo. Los nodos utilizados fueron 3, tripio, trauco y caleuche.\\
+Los tiempos de procesamiento para encontrar el camino más corto se presentan a continuación\\
+
+\begin{center}
+ \includegraphics[width=12cm]{imgs/table_seconds.png}\\
+ \footnotesize{Tiempos CPU con 1 a 16 threads. Comando usado:}\\
+\end{center}
+
+\begin{center}
+ \includegraphics[width=12cm]{imgs/table_minutes.png}\\
+ \footnotesize{Tiempos CPU con 1 a 16 threads. Comando usado:}\\
+\end{center}
 
 \textit{./run.sh test/img/big.png test/kernel/blur\_3.txt 3}\\
 
