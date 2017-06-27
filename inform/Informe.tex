@@ -77,7 +77,8 @@
 
 \subsection*{Análisis de rendimiento}
 Se ejecutó el programa en su versión secuencial y paralela. La versión paralela se corrió con 4 procesos en cada nodo. Los nodos utilizados fueron 3, tripio, trauco y caleuche.\\
-Los tiempos de procesamiento para encontrar el camino más corto se presentan a continuación
+Los tiempos de procesamiento para encontrar el camino más corto, junto con los speedups respectivos, se presentan a continuación.\\
+Las tablas describen para cada test el tiempo que tomo ejecutando \textit{time} en los campos \textit{real} y \textit{user}. S son los tiempos secuenciales, P los paralelos.
 
 \begin{center}
  \includegraphics[width=6cm]{imgs/table_seconds.png}\\
@@ -88,6 +89,8 @@ Los tiempos de procesamiento para encontrar el camino más corto se presentan a 
  \includegraphics[width=6cm]{imgs/table_minutes.png}\\
  \footnotesize{Tiempos de ejecución en minutos}\\
 \end{center}
+
+
 
 \textit{./run.sh test/img/big.png test/kernel/blur\_3.txt 3}\\
 
