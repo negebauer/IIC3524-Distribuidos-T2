@@ -1,7 +1,7 @@
 .git
 **/.gitignore
 **/.DS_Store
-**/.o
+*.o
 **/.log
 testout/*.txt
 atom.command
