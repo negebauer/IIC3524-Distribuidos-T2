@@ -8,21 +8,6 @@ user	2m4.842s
 sys	0m0.342s
 
 --- parallel t6 ---
-rank: 1
-Route cost 28
- 0 2 4 10 9 1 3 6 12 8 14 15 7 13 17 11 5 16
-rank: 0
-Route cost 30
- 0 1 3 6 12 8 2 4 10 9 14 15 7 13 17 11 5 16
-Route cost 30
- 0 1 3 6 12 8 2 4 10 9 14 15 7 13 17 11 5 16
-rank: 3
-Route cost 30
- 0 4 2 8 12 6 3 1 7 13 14 15 10 9 17 11 5 16
-rank: 2
-Route cost 31
- 0 3 6 12 8 2 4 10 9 1 7 15 14 13 17 11 5 16
-
 real	0m42.321s
 user	2m26.492s
 sys	0m1.584s
@@ -51,40 +36,3 @@ Route cost 28
 real	4m30.504s
 user	4m29.336s
 sys	0m1.152s
-
-rank: 9
-Route cost 28
- 0 10 4 2 8 12 6 3 1 9 14 15 7 13 17 11 5 16
-rank: 6
-Route cost 32
- 0 7 13 14 15 12 8 2 4 10 9 1 3 6 17 11 5 16
-rank: 8
-Route cost 29
- 0 9 10 4 2 8 12 15 14 13 7 1 3 6 17 11 5 16
-rank: 0
-Route cost 30
- 0 1 3 6 12 8 2 4 10 9 14 15 7 13 17 11 5 16
-Route cost 30
- 0 1 3 6 12 8 2 4 10 9 14 15 7 13 17 11 5 16
-rank: 3
-Route cost 30
- 0 4 2 8 12 6 3 1 7 13 14 15 10 9 17 11 5 16
-rank: 5
-Route cost 29
- 0 6 3 1 7 13 14 15 12 8 2 4 10 9 17 11 5 16
-rank: 7
-Route cost 37
- 0 8 2 4 10 9 14 15 12 6 3 1 7 13 17 11 5 16
-rank: 10
-Route cost 31
- 0 11 17 6 3 1 9 10 4 2 8 12 15 14 13 7 5 16
-rank: 11
-Route cost 31
- 0 12 6 3 1 9 10 4 2 8 14 15 7 13 17 11 5 16
-rank: 4
-Route cost 31
- 0 5 16 13 7 1 3 6 17 11 4 2 8 12 15 14 9 10
-
-real	2m51.803s
-user	2m30.496s
-sys	0m15.404s
