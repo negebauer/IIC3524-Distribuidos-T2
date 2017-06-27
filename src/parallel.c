@@ -73,10 +73,10 @@ void watchWork(WSP *wsp, int **status, MPI_Request **requests_cost) {
       }
     }
   }
-  for (int i = 1; i < wsp->size - 1; i++) {
-    printf("i %i f %i n %i c %i\n", i, status[i][FINISHED], status[i][NODE],
-           status[i][COST]);
-  }
+  // for (int i = 1; i < wsp->size - 1; i++) {
+  //   printf("i %i f %i n %i c %i\n", i, status[i][FINISHED], status[i][NODE],
+  //          status[i][COST]);
+  // }
   int min = -1;
   for (int i = 1; i < wsp->size - 1; i++) {
     int cost = status[i][COST];
@@ -88,6 +88,7 @@ void watchWork(WSP *wsp, int **status, MPI_Request **requests_cost) {
   for (int i = 1; i < wsp->size - 1; i++) {
     free(status[i]);
   }
+  free(status);
   int nodes;
   MPI_Comm_size(MPI_COMM_WORLD, &nodes);
   for (int i = 1; i < nodes; i++) {
@@ -95,9 +96,8 @@ void watchWork(WSP *wsp, int **status, MPI_Request **requests_cost) {
       free(requests_cost[i]);
     }
   }
-  free(status);
   free(requests_cost);
-  return;
+  MPI_Finalize();
 };
 
 void awaitWork(WSP *wsp, int rank) {
@@ -107,15 +107,23 @@ void awaitWork(WSP *wsp, int rank) {
     Route *route = routeInit(wsp);
     routeAdvance(wsp, route, destination);
     dfs(wsp, route, rank);
-    wspPrintRoute(wsp);
+    // wspPrintRoute(wsp);
     MPI_Send(&wsp->cost, 1, MPI_INT, 0, COST, MPI_COMM_WORLD);
     routeFree(wsp, route);
     MPI_Recv(&destination, 1, MPI_INT, 0, DESTINATION, MPI_COMM_WORLD, NULL);
   }
+  MPI_Finalize();
 };
 
-void parallelize(char *input) {
-  WSP *wsp = wspInit(input);
+int main(int argc, char *argv[]) {
+  /* The program receives 1 param */
+  if (argc != 2) {
+    printf("Modo de uso: %s <input.txt>\n", argv[0]);
+    printf("\t<input.txt> es el problema a resolver\n");
+    return 1;
+  }
+  MPI_Init(&argc, &argv);
+  WSP *wsp = wspInit(argv[1]);
   int nodes, rank;
   MPI_Comm_size(MPI_COMM_WORLD, &nodes);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -131,7 +139,6 @@ void parallelize(char *input) {
 
     for (int node = 1; node < nodes; node++) {
       if (node == wsp->size - 1) {
-        printf("Moar nodes than cities\n");
         break;
       }
       requests_cost[node] = malloc(sizeof(MPI_Request));
@@ -146,19 +153,5 @@ void parallelize(char *input) {
     awaitWork(wsp, rank);
   }
   wspFree(wsp);
-};
-
-int main(int argc, char *argv[]) {
-  /* The program receives 1 param */
-  if (argc != 2) {
-    printf("Modo de uso: %s <input.txt>\n", argv[0]);
-    printf("\t<input.txt> es el problema a resolver\n");
-    return 1;
-  }
-  MPI_Init(&argc, &argv);
-
-  parallelize(argv[1]);
-
-  MPI_Finalize();
   return 0;
 }
