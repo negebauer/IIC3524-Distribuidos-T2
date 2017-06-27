@@ -107,7 +107,7 @@ void awaitWork(WSP *wsp, int rank) {
     Route *route = routeInit(wsp);
     routeAdvance(wsp, route, destination);
     dfs(wsp, route, rank);
-    // wspPrintRoute(wsp);
+    wspPrintRoute(wsp);
     MPI_Send(&wsp->cost, 1, MPI_INT, 0, COST, MPI_COMM_WORLD);
     routeFree(wsp, route);
     MPI_Recv(&destination, 1, MPI_INT, 0, DESTINATION, MPI_COMM_WORLD, NULL);
