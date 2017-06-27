@@ -81,7 +81,8 @@ void watchWork(WSP *wsp, int **status, MPI_Request **requests_cost) {
   }
   int min = -1;
   for (int i = 1; i < wsp->size - 1; i++) {
-    if (min == -1 || status[i][COST] < min) {
+    int cost = status[i][COST];
+    if (min == -1 || (cost < min && cost > 0)) {
       min = status[i][COST];
     }
   }
@@ -92,29 +93,33 @@ void watchWork(WSP *wsp, int **status, MPI_Request **requests_cost) {
   int nodes;
   MPI_Comm_size(MPI_COMM_WORLD, &nodes);
   for (int i = 1; i < nodes; i++) {
-    free(requests_cost[i]);
+    if (i < wsp->size - 1) {
+      free(requests_cost[i]);
+    }
   }
   free(status);
   free(requests_cost);
+  printf("Finished root\n");
   return;
 };
 
 void awaitWork(WSP *wsp, int rank) {
   int destination;
   MPI_Recv(&destination, 1, MPI_INT, 0, DESTINATION, MPI_COMM_WORLD, NULL);
-  if (destination == -1) {
-    return;
+  while (destination != -1) {
+    Route *route = routeInit(wsp);
+    routeAdvance(wsp, route, destination);
+    dfs(wsp, route, rank);
+    // wspPrintRoute(wsp);
+    MPI_Send(&wsp->cost, 1, MPI_INT, 0, COST, MPI_COMM_WORLD);
+    routeFree(wsp, route);
+    MPI_Recv(&destination, 1, MPI_INT, 0, DESTINATION, MPI_COMM_WORLD, NULL);
   }
-  Route *route = routeInit(wsp);
-  routeAdvance(wsp, route, destination);
-  dfs(wsp, route, rank);
-  // wspPrintRoute(wsp);
-  MPI_Send(&wsp->cost, 1, MPI_INT, 0, COST, MPI_COMM_WORLD);
-  routeFree(wsp, route);
-  awaitWork(wsp, rank);
+  printf("Finished rank %i\n", rank);
 };
 
-void parallelize(WSP *wsp) {
+void parallelize(char *input) {
+  WSP *wsp = wspInit(input);
   int nodes, rank;
   MPI_Comm_size(MPI_COMM_WORLD, &nodes);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -129,7 +134,7 @@ void parallelize(WSP *wsp) {
     }
 
     for (int node = 1; node < nodes; node++) {
-      if (node >= wsp->size - 1) {
+      if (node == wsp->size - 1) {
         printf("Moar nodes than cities\n");
         break;
       }
@@ -141,9 +146,10 @@ void parallelize(WSP *wsp) {
       MPI_Send(&destination, 1, MPI_INT, node, DESTINATION, MPI_COMM_WORLD);
     }
     watchWork(wsp, status, requests_cost);
-  } else {
+  } else if (rank < wsp->size - 1) {
     awaitWork(wsp, rank);
   }
+  wspFree(wsp);
 };
 
 int main(int argc, char *argv[]) {
@@ -154,12 +160,9 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   MPI_Init(&argc, &argv);
-  char *input = argv[1];
-  WSP *wsp = wspInit(input);
 
-  parallelize(wsp);
+  parallelize(argv[1]);
 
-  wspFree(wsp);
   MPI_Finalize();
   return 0;
 }
