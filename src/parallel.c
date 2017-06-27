@@ -8,11 +8,12 @@
 void dfs(WSP *wsp, Route *route, int rank, int *receive_route_cost) {
   // If route completed, check if best
   if (receive_route_cost && *receive_route_cost != 0) {
-    printf("Received %i\n", *receive_route_cost);
-    if (wsp->cost == -1 || *receive_route_cost < wsp->cost) {
-      wsp->cost = *receive_route_cost;
-    }
+    int cost = *receive_route_cost;
     *receive_route_cost = 0;
+    printf("Received %i\n", cost);
+    if (wsp->cost == -1 || cost < wsp->cost) {
+      wsp->cost = cost;
+    }
   }
   if (route->cities[wsp->size - 1] != 0) {
     if (wsp->cost == -1 || route->cost < wsp->cost) {
