@@ -5,19 +5,21 @@
 #include <time.h>
 #define SIZE 4
 
-void dfs(WSP *wsp, Route *route, int rank) {
+void dfs(WSP *wsp, Route *route, int rank, int *receive_route_cost) {
   // If route completed, check if best
-  int receive_route_cost = -1;
-  if (receive_route_cost != -1) {
-    wsp->cost = receive_route_cost;
-    receive_route_cost = -1;
-    printf("Received cost %i\n", receive_route_cost);
+  if (receive_route_cost && *receive_route_cost != 0) {
+    printf("Received %i\n", *receive_route_cost);
+    if (wsp->cost == -1 || *receive_route_cost < wsp->cost) {
+      wsp->cost = *receive_route_cost;
+    }
+    *receive_route_cost = 0;
   }
   if (route->cities[wsp->size - 1] != 0) {
     if (wsp->cost == -1 || route->cost < wsp->cost) {
       wsp->cost = route->cost;
-      printf("Scatter %i\n", wsp->cost);
-      MPI_Scatter(&wsp->cost, 1, MPI_INT, &receive_route_cost, 1, MPI_INT, rank,
+      int cost = wsp->cost;
+      printf("Scatter %i\n", cost);
+      MPI_Scatter(&cost, 1, MPI_INT, receive_route_cost, 1, MPI_INT, rank,
                   MPI_COMM_WORLD);
       for (int i = 0; i < wsp->size; i++) {
         wsp->cities[i] = route->cities[i];
@@ -38,7 +40,7 @@ void dfs(WSP *wsp, Route *route, int rank) {
     // printf("Checking destination %i\n", destination);
     if (routeShouldVisit(route, destination)) {
       routeAdvance(wsp, route, destination);
-      dfs(wsp, route, rank);
+      dfs(wsp, route, rank, receive_route_cost);
       routeReturn(wsp, route, destination);
     }
   }
@@ -61,7 +63,10 @@ void parallel(WSP *wsp, int rank, Route *route) {
   }
 
   routeAdvance(wsp, route, recv_destination);
-  dfs(wsp, route, rank);
+  int *receive_route_cost = malloc(sizeof(int));
+  *receive_route_cost = 0;
+  dfs(wsp, route, rank, receive_route_cost);
+  free(receive_route_cost);
 
   printf("rank: %i\n", rank);
   wspPrintRoute(wsp);
